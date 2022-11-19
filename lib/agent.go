@@ -6,6 +6,7 @@ import (
 	"net/http/cookiejar"
 	"time"
 
+	"github.com/joaquinrovira/upv-oos-reservations/internal"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/model"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/requests"
 )
@@ -24,6 +25,12 @@ type Config struct {
 type TargetValue struct {
 	Day  time.Weekday
 	Time float64 // TODO: find a better way to do this
+}
+
+func (t TargetValue) Format(f fmt.State, c rune) {
+	hour := int64(t.Time)
+	minute := int64((t.Time - float64(hour)) * 60)
+	f.Write([]byte(fmt.Sprintf("%s at %2d:%2d", t.Day.String(), hour, minute)))
 }
 
 func New(c Config) (a *Agent, err error) {
@@ -62,29 +69,30 @@ func (a *Agent) Run() (err error) {
 
 		// Validate slot
 		if slot == nil {
-			fmt.Printf("unable to fulfill requrest for %v, no time slot available\n", target)
+			internal.Log().Err(fmt.Errorf("no time slot available")).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
 			continue
 		}
 		if slot.Availability == 0 {
-			fmt.Printf("unable to fulfill requrest for %v, no availability on this slot\n", target)
+			internal.Log().Err(fmt.Errorf("no availability on this slot")).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
 			continue
 		}
 		if slot.URL == nil {
-			fmt.Printf("unable to fulfill requrest for %v, missing reservation URL on slot\n", target)
+			internal.Log().Err(fmt.Errorf("missing reservation URL on slot")).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
 			continue
 		}
 
 		// Send reservation request
 		res, err := requests.ReserveSlot(a.Client, slot)
 		if err != nil {
-			fmt.Printf("unable to fulfill requrest for %v, %s\n", target, err.Error())
+			internal.Log().Err(err).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
 			continue
 		}
 		if res.StatusCode < 200 || 400 <= res.StatusCode {
-			fmt.Printf("unable to fulfill requrest for %v, response with status code %v\n", target, res.Status)
+			internal.Log().Err(fmt.Errorf("response with status code %v", res.Status)).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
 			continue
 		}
-		fmt.Println(res.Status, err)
+
+		internal.Log().Info().Msg(fmt.Sprintf("[%v] request %v fullfilled successfully", res.Status, target))
 	}
 
 	return err

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	internal "github.com/joaquinrovira/upv-oos-reservations/internal"
+	"github.com/joaquinrovira/upv-oos-reservations/internal"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/exitcodes"
 
 	"github.com/joho/godotenv"
