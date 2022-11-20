@@ -24,13 +24,11 @@ type Config struct {
 
 type TargetValue struct {
 	Day  time.Weekday
-	Time float64 // TODO: find a better way to do this
+	Time model.TimeOfDay
 }
 
 func (t TargetValue) Format(f fmt.State, c rune) {
-	hour := int64(t.Time)
-	minute := int64((t.Time - float64(hour)) * 60)
-	f.Write([]byte(fmt.Sprintf("%s at %2d:%2d", t.Day.String(), hour, minute)))
+	f.Write([]byte(fmt.Sprintf("%s at %s", t.Day.String(), t.Time.String())))
 }
 
 func New(c Config) (a *Agent, err error) {
@@ -53,7 +51,7 @@ func New(c Config) (a *Agent, err error) {
 // Returns error for invalid configurations
 func checkConfig(c Config) (err error) {
 	for _, v := range c.Target {
-		_, err = model.NewSlotTime(v.Time)
+		err = v.Time.Validate()
 		if err != nil {
 			return
 		}
@@ -83,9 +81,7 @@ func (a *Agent) Run() (err error) {
 }
 
 func (a *Agent) handleTarget(reservations *model.ReservationsWeek, target TargetValue) error {
-	day := target.Day
-	time, _ := model.NewSlotTime(target.Time) // error can be ignored, values checked on New()
-	slot := reservations.SlotAt(day, time)
+	slot := reservations.SlotAt(target.Day, target.Time)
 
 	// Validate slot
 	if slot == nil {

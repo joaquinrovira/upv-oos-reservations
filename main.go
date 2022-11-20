@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/joaquinrovira/upv-oos-reservations/internal/model"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
 	"github.com/joaquinrovira/upv-oos-reservations/lib"
 )
@@ -15,7 +16,7 @@ func main() {
 		User: user,
 		Pass: pass,
 		Target: []lib.TargetValue{
-			{Day: time.Monday, Time: 12.5},
+			{Day: time.Monday, Time: model.TimeOfDay{Hours: 13, Minutes: 30}},
 		},
 	}
 
