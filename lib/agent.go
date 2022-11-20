@@ -34,12 +34,8 @@ func (t TargetValue) Format(f fmt.State, c rune) {
 }
 
 func New(c Config) (a *Agent, err error) {
-	// Check config
-	for _, v := range c.Target {
-		_, err = model.NewSlotTime(v.Time)
-		if err != nil {
-			return
-		}
+	if err = checkConfig(c); err != nil {
+		return
 	}
 
 	jar, err := cookiejar.New(nil)
@@ -51,6 +47,18 @@ func New(c Config) (a *Agent, err error) {
 			return http.ErrUseLastResponse
 		}}
 	a = &Agent{Cfg: c, Client: &client}
+	return
+}
+
+// Returns error for invalid configurations
+func checkConfig(c Config) (err error) {
+	for _, v := range c.Target {
+		_, err = model.NewSlotTime(v.Time)
+		if err != nil {
+			return
+		}
+	}
+
 	return
 }
 
