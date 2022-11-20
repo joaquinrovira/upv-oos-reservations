@@ -71,37 +71,38 @@ func (a *Agent) Run() (err error) {
 	}
 
 	for _, target := range a.Cfg.Target {
-		day := target.Day
-		time, _ := model.NewSlotTime(target.Time) // error can be ignored, values checked on New()
-		slot := value.SlotAt(day, time)
-
-		// Validate slot
-		if slot == nil {
-			internal.Log().Err(fmt.Errorf("no time slot available")).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
-			continue
-		}
-		if slot.Availability == 0 {
-			internal.Log().Err(fmt.Errorf("no availability on this slot")).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
-			continue
-		}
-		if slot.URL == nil {
-			internal.Log().Err(fmt.Errorf("missing reservation URL on slot")).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
-			continue
-		}
-
-		// Send reservation request
-		res, err := requests.ReserveSlot(a.Client, slot)
+		err = a.handleTarget(value, target)
 		if err != nil {
 			internal.Log().Err(err).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
-			continue
+		} else {
+			internal.Log().Info().Msg(fmt.Sprintf("[OK] request %v fullfilled successfully", target))
 		}
-		if res.StatusCode < 200 || 400 <= res.StatusCode {
-			internal.Log().Err(fmt.Errorf("response with status code %v", res.Status)).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
-			continue
-		}
-
-		internal.Log().Info().Msg(fmt.Sprintf("[%v] request %v fullfilled successfully", res.Status, target))
 	}
 
 	return err
+}
+
+func (a *Agent) handleTarget(reservations *model.ReservationsWeek, target TargetValue) error {
+	day := target.Day
+	time, _ := model.NewSlotTime(target.Time) // error can be ignored, values checked on New()
+	slot := reservations.SlotAt(day, time)
+
+	// Validate slot
+	if slot == nil {
+		return fmt.Errorf("no time slot available")
+	}
+	if slot.Availability == 0 {
+		return fmt.Errorf("no availability on this slot")
+	}
+
+	// Send reservation request
+	res, err := requests.ReserveSlot(a.Client, slot)
+	if err != nil {
+		return err
+	}
+	if res.StatusCode < 200 || 400 <= res.StatusCode {
+		return fmt.Errorf("response with status code %v", res.Status)
+	}
+
+	return nil
 }
