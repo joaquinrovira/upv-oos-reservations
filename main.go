@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
-	lib "github.com/joaquinrovira/upv-oos-reservations/lib"
+	"github.com/joaquinrovira/upv-oos-reservations/lib"
 )
 
 func main() {
