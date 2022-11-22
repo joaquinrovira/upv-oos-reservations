@@ -22,7 +22,13 @@ type Config struct {
 	Target TargetValue
 }
 
-type TargetValue map[time.Weekday]model.TimeRange
+/*
+For each weekday, we can define a list of time ranges we want to try
+to make a reservation in. The list is sorted by descreasing priority.
+If a slot is open within the first time range, a reservation will be
+executed for that slot.
+*/
+type TargetValue map[time.Weekday][]model.TimeRange
 
 func New(c Config) (a *Agent, err error) {
 	if err = checkConfig(c); err != nil {
@@ -43,10 +49,12 @@ func New(c Config) (a *Agent, err error) {
 
 // Returns error for invalid configurations
 func checkConfig(c Config) (err error) {
-	for _, tr := range c.Target {
-		err = tr.Validate()
-		if err != nil {
-			return
+	for _, trList := range c.Target {
+		for _, tr := range trList {
+			err = tr.Validate()
+			if err != nil {
+				return
+			}
 		}
 	}
 
@@ -61,12 +69,14 @@ func (a *Agent) Run() (err error) {
 		return err
 	}
 
+	// TODO: if you run the program twice, if can reserve two times in the same day
+	// FIX IT!
 	for day, target := range a.Cfg.Target {
-		err = a.handleTarget(value, day, target)
+		err = a.handleTargetList(value, day, target)
 		if err != nil {
 			internal.Log().Err(err).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
 		} else {
-			internal.Log().Info().Msg(fmt.Sprintf("[OK] request %v fullfilled successfully", target))
+			internal.Log().Info().Msg(fmt.Sprintf("[OK] request %v %v fullfilled successfully", day.String(), target))
 		}
 	}
 
@@ -82,7 +92,7 @@ func (a *Agent) handleTargetList(reservations *model.ReservationsWeek, day time.
 		}
 	}
 
-	return
+	return fmt.Errorf("unable to fulfill target list")
 }
 
 func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Weekday, target model.TimeRange) error {

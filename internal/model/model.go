@@ -61,7 +61,7 @@ const (
 type SlotWithinSearchStrategy int
 
 const (
-	First SlotWithinSearchStrategy = iota
+	FirstAvailable SlotWithinSearchStrategy = iota
 )
 
 func (r *ReservationsWeek) SlotAtContaints(day time.Weekday, t TimeOfDay) *ReservationSlot {
@@ -97,10 +97,20 @@ func (r *ReservationsWeek) SlotAt(day time.Weekday, t TimeOfDay) *ReservationSlo
 	return r.SlotAtWithStrategy(day, t, Containts)
 }
 
-func (r *ReservationsWeek) SlotWithinFirst(day time.Weekday, t TimeRange) *ReservationSlot {
+func FirstAvailableCondition(slot ReservationSlot, slotTime TimeRange, day time.Weekday, t TimeRange) bool {
+	if t.StartTime.Value() > slotTime.StartTime.Value() || slotTime.StartTime.Value() > t.EndTime.Value() {
+		return false
+	}
+	if slot.Availability == 0 {
+		return false
+	}
+	return true
+}
+
+func (r *ReservationsWeek) SlotWithinFirstAvailable(day time.Weekday, t TimeRange) *ReservationSlot {
 	for idx, slot := range r.Slots[day] {
 		slotTime := r.SlotTimes[idx]
-		if t.StartTime.Value() <= slotTime.StartTime.Value() && slotTime.StartTime.Value() <= t.EndTime.Value() {
+		if FirstAvailableCondition(slot, slotTime, day, t) {
 			return &slot
 		}
 	}
@@ -110,14 +120,14 @@ func (r *ReservationsWeek) SlotWithinFirst(day time.Weekday, t TimeRange) *Reser
 func (r *ReservationsWeek) SlotWithinWithStrategy(day time.Weekday, t TimeRange, strat SlotWithinSearchStrategy) *ReservationSlot {
 
 	switch strat {
-	case First:
-		return r.SlotWithinFirst(day, t)
+	case FirstAvailable:
+		return r.SlotWithinFirstAvailable(day, t)
 	}
 	return nil
 }
 
 func (r *ReservationsWeek) SlotWithin(day time.Weekday, t TimeRange) *ReservationSlot {
-	return r.SlotWithinWithStrategy(day, t, First)
+	return r.SlotWithinWithStrategy(day, t, FirstAvailable)
 }
 
 func NewReservarionsWeek() *ReservationsWeek {

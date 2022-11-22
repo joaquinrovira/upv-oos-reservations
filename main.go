@@ -16,9 +16,15 @@ func main() {
 		User: user,
 		Pass: pass,
 		Target: lib.TargetValue{
-			time.Monday: model.TimeRange{
-				StartTime: model.TimeOfDay{Hour: 8},
-				EndTime:   model.TimeOfDay{Hour: 20},
+			time.Monday: []model.TimeRange{
+				{
+					StartTime: model.TimeOfDay{Hour: 20},
+					EndTime:   model.TimeOfDay{Hour: 22},
+				},
+				{
+					StartTime: model.TimeOfDay{Hour: 8},
+					EndTime:   model.TimeOfDay{Hour: 21},
+				},
 			},
 		},
 	}
