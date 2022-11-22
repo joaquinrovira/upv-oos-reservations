@@ -6,8 +6,25 @@ import (
 )
 
 type TimeOfDay struct {
-	Hours   uint8
-	Minutes uint8
+	Hour   uint8
+	Minute uint8
+}
+
+func (t TimeOfDay) Value() uint16 {
+	return uint16(t.Hour)*60 + uint16(t.Minute)
+}
+
+func (t TimeOfDay) Validate() (err error) {
+	_, err = NewTimeOfDay(t.Hour, t.Minute)
+	return
+}
+
+func (t TimeOfDay) String() string {
+	return fmt.Sprintf("%02d:%02d", t.Hour, t.Minute)
+}
+
+func (t TimeOfDay) Format(f fmt.State, c rune) {
+	f.Write([]byte(t.String()))
 }
 
 func NewTimeOfDay(hours, minutes uint8) (t TimeOfDay, err error) {
@@ -16,7 +33,7 @@ func NewTimeOfDay(hours, minutes uint8) (t TimeOfDay, err error) {
 		err = fmt.Errorf("hour '%d' out of range [0,24[", hours)
 		return
 	} else {
-		t.Hours = uint8(hours)
+		t.Hour = uint8(hours)
 	}
 
 	// Parse minutes
@@ -24,7 +41,7 @@ func NewTimeOfDay(hours, minutes uint8) (t TimeOfDay, err error) {
 		err = fmt.Errorf("minute '%d' out of range [0,60[", minutes)
 		return
 	} else {
-		t.Minutes = uint8(minutes)
+		t.Minute = uint8(minutes)
 	}
 
 	return
@@ -41,21 +58,4 @@ func NewTimeOfDayString(hours, minutes string) (t TimeOfDay, err error) {
 	}
 
 	return NewTimeOfDay(uint8(hrs), uint8(mins))
-}
-
-func (t TimeOfDay) String() string {
-	return fmt.Sprintf("%2d:%2d", t.Hours, t.Minutes)
-}
-
-func (t TimeOfDay) Format(f fmt.State, c rune) {
-	f.Write([]byte(t.String()))
-}
-
-func (t TimeOfDay) Value() uint16 {
-	return uint16(t.Hours)*60 + uint16(t.Minutes)
-}
-
-func (t TimeOfDay) Validate() (err error) {
-	_, err = NewTimeOfDay(t.Hours, t.Minutes)
-	return
 }

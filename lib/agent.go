@@ -19,17 +19,10 @@ type Agent struct {
 type Config struct {
 	User   string
 	Pass   string
-	Target []TargetValue
+	Target TargetValue
 }
 
-type TargetValue struct {
-	Day  time.Weekday
-	Time model.TimeOfDay
-}
-
-func (t TargetValue) Format(f fmt.State, c rune) {
-	f.Write([]byte(fmt.Sprintf("%s at %s", t.Day.String(), t.Time.String())))
-}
+type TargetValue map[time.Weekday]model.TimeRange
 
 func New(c Config) (a *Agent, err error) {
 	if err = checkConfig(c); err != nil {
@@ -50,8 +43,8 @@ func New(c Config) (a *Agent, err error) {
 
 // Returns error for invalid configurations
 func checkConfig(c Config) (err error) {
-	for _, v := range c.Target {
-		err = v.Time.Validate()
+	for _, tr := range c.Target {
+		err = tr.Validate()
 		if err != nil {
 			return
 		}
@@ -68,8 +61,8 @@ func (a *Agent) Run() (err error) {
 		return err
 	}
 
-	for _, target := range a.Cfg.Target {
-		err = a.handleTarget(value, target)
+	for day, target := range a.Cfg.Target {
+		err = a.handleTarget(value, day, target)
 		if err != nil {
 			internal.Log().Err(err).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
 		} else {
@@ -80,8 +73,20 @@ func (a *Agent) Run() (err error) {
 	return err
 }
 
-func (a *Agent) handleTarget(reservations *model.ReservationsWeek, target TargetValue) error {
-	slot := reservations.SlotAt(target.Day, target.Time)
+func (a *Agent) handleTargetList(reservations *model.ReservationsWeek, day time.Weekday, targetList []model.TimeRange) (err error) {
+	for _, target := range targetList {
+		err = a.handleTarget(reservations, day, target)
+
+		if err == nil {
+			return
+		}
+	}
+
+	return
+}
+
+func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Weekday, target model.TimeRange) error {
+	slot := reservations.SlotWithin(day, target)
 
 	// Validate slot
 	if slot == nil {

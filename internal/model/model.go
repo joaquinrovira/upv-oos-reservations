@@ -23,34 +23,101 @@ func ParseSlotTime(s string) (t TimeOfDay, err error) {
 	return
 }
 
-type SlotTimeRange struct {
+type TimeRange struct {
 	StartTime TimeOfDay
 	EndTime   TimeOfDay
 }
 
-func (r SlotTimeRange) timeInRange(t TimeOfDay) bool {
-	return r.StartTime.Value() <= t.Value() && t.Value() < r.EndTime.Value()
+func (tr TimeRange) Validate() error {
+	if tr.StartTime.Value() > tr.EndTime.Value() {
+		return fmt.Errorf("start time (%v) greater than end time (%v)", tr.StartTime, tr.EndTime)
+	}
+	return nil
+}
+
+func (tr TimeRange) timeInRange(t TimeOfDay) bool {
+	return tr.StartTime.Value() <= t.Value() && t.Value() < tr.EndTime.Value()
 }
 
 type ReservationSlot struct {
 	Name         string
-	URL          *url.URL
 	Availability int64
 	Reserved     bool
+	URL          *url.URL
 }
 
 type ReservationsWeek struct {
-	SlotTimes []SlotTimeRange
+	SlotTimes []TimeRange
 	Slots     map[time.Weekday][]ReservationSlot
 }
 
-func (r *ReservationsWeek) SlotAt(day time.Weekday, t TimeOfDay) *ReservationSlot {
+type SlotAtSearchStrategy int
+
+const (
+	Containts SlotAtSearchStrategy = iota
+	NotBefore
+)
+
+type SlotWithinSearchStrategy int
+
+const (
+	First SlotWithinSearchStrategy = iota
+)
+
+func (r *ReservationsWeek) SlotAtContaints(day time.Weekday, t TimeOfDay) *ReservationSlot {
 	for idx, slot := range r.Slots[day] {
 		if r.SlotTimes[idx].timeInRange(t) {
 			return &slot
 		}
 	}
 	return nil
+}
+
+func (r *ReservationsWeek) SlotAtNotBefore(day time.Weekday, t TimeOfDay) *ReservationSlot {
+	for idx, slot := range r.Slots[day] {
+		if r.SlotTimes[idx].StartTime.Value() >= t.Value() {
+			return &slot
+		}
+	}
+	return nil
+}
+
+func (r *ReservationsWeek) SlotAtWithStrategy(day time.Weekday, t TimeOfDay, strat SlotAtSearchStrategy) *ReservationSlot {
+
+	switch strat {
+	case Containts:
+		return r.SlotAtContaints(day, t)
+	case NotBefore:
+		return r.SlotAtNotBefore(day, t)
+	}
+	return nil
+}
+
+func (r *ReservationsWeek) SlotAt(day time.Weekday, t TimeOfDay) *ReservationSlot {
+	return r.SlotAtWithStrategy(day, t, Containts)
+}
+
+func (r *ReservationsWeek) SlotWithinFirst(day time.Weekday, t TimeRange) *ReservationSlot {
+	for idx, slot := range r.Slots[day] {
+		slotTime := r.SlotTimes[idx]
+		if t.StartTime.Value() <= slotTime.StartTime.Value() && slotTime.StartTime.Value() <= t.EndTime.Value() {
+			return &slot
+		}
+	}
+	return nil
+}
+
+func (r *ReservationsWeek) SlotWithinWithStrategy(day time.Weekday, t TimeRange, strat SlotWithinSearchStrategy) *ReservationSlot {
+
+	switch strat {
+	case First:
+		return r.SlotWithinFirst(day, t)
+	}
+	return nil
+}
+
+func (r *ReservationsWeek) SlotWithin(day time.Weekday, t TimeRange) *ReservationSlot {
+	return r.SlotWithinWithStrategy(day, t, First)
 }
 
 func NewReservarionsWeek() *ReservationsWeek {

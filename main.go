@@ -15,8 +15,11 @@ func main() {
 	cfg := lib.Config{
 		User: user,
 		Pass: pass,
-		Target: []lib.TargetValue{
-			{Day: time.Monday, Time: model.TimeOfDay{Hours: 13, Minutes: 30}},
+		Target: lib.TargetValue{
+			time.Monday: model.TimeRange{
+				StartTime: model.TimeOfDay{Hour: 8},
+				EndTime:   model.TimeOfDay{Hour: 20},
+			},
 		},
 	}
 

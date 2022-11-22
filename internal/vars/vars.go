@@ -15,8 +15,8 @@ type variable string
 const (
 	User         variable = "UPV_USER"
 	Pass         variable = "UPV_PASS"
-	ActivityType          = "UPV_ACTIVITY_TYPE"
-	ActivityCode          = "UPV_ACTIVITY_CODE"
+	ActivityType variable = "UPV_ACTIVITY_TYPE"
+	ActivityCode variable = "UPV_ACTIVITY_CODE"
 )
 
 var requiredVariables = []variable{

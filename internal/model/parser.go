@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -82,7 +81,7 @@ func MarshalTable(data *TableData) (reservations *ReservationsWeek, err error) {
 	return
 }
 
-func parseTimeSlotsFromTable(data *TableData) (slotTimes []SlotTimeRange, err error) {
+func parseTimeSlotsFromTable(data *TableData) (slotTimes []TimeRange, err error) {
 	for row := 0; row < len(data.Rows); row++ {
 		// For each row of the table, the first column contains the time slot description
 		// Time slot text follows the format 'XX:YY-AA:BB <some text>'
@@ -111,7 +110,7 @@ func parseTimeSlotsFromTable(data *TableData) (slotTimes []SlotTimeRange, err er
 		}
 
 		// Store time slot
-		slotTimeRange := SlotTimeRange{t0, t1}
+		slotTimeRange := TimeRange{t0, t1}
 		slotTimes = append(slotTimes, slotTimeRange)
 	}
 
@@ -139,28 +138,35 @@ func parseWeekdaySlotFromTableRow(row *TableDataRow, weekdayIndex int) (slot Res
 	rawText := rawSlot.RawText
 	urlText := rawSlot.URL
 
-	/**
-	If the rawSlot has non-empty urlText, we can tell that the rawText
-	will be in the format <a [some attirbutes...]> [RAW_TEXT] </a>.
-	Therefore we parse it we goquery to remove the surrounding <a> tag
-	and obtain the raw text we the function expects.
-	**/
-	if urlText != "" {
-		doc, err := goquery.NewDocumentFromReader(strings.NewReader(rawText))
-		if err != nil {
-			log.Fatal(err)
-		}
-		rawText, _ = doc.Find("a").Html()
+	// Empty slots are possible
+	if strings.TrimSpace(rawText) == "" {
+		return
 	}
 
 	/**
-	From this point forward, rawText will have a known format, comprised
-	of 2 or more lines of text depending on the state of the slot. We can encounter
-	3 different scenarios:
+	The rawText may be sorrounded by either <a> or <span> tags in formats
+	2 and 4 respectively (see comments below for more info). If there is
+	such a surrounding tag, we must remove it.
+	**/
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(rawText))
+	if sel := doc.Find("html body").Children().First(); sel.Children().Length() != 0 {
+		rawText, _ = sel.Html()
+	}
+
+	/**
+	If the slot is freely accessible, the rawText will be in the format
+	<span [some attirbutes...]> [RAW_TEXT] </span>
+	**/
+	// removeSpan := doc.Find()
+
+	/**
+	From this point forward, rawText will have a known format.
+	We can encounter one  of several different possibilities:
 
 	1 - The slot has not been reserved and has availability: 	"[ID]<br/>Solo Socios<br/>[NUM] libres"
 	2 - The slot has not been reserved and has no availability: "[ID]<br/>Solo Socios<br/>Completo"
 	3 - The slot has been reserved: 							"[ID]<br/>Ya inscrito"
+	4 - The slot is freely accessible:							"[ID]<br>Acceso libre<br>Solo Socios"
 
 	NOTE:
 		[ID] 	represents the slot's ID and follows the regex '[A-Z]{2}[0-9]{3}'
@@ -197,6 +203,6 @@ func parseWeekdaySlotFromTableRow(row *TableDataRow, weekdayIndex int) (slot Res
 	regstered := AlreadyRegisteredRegex.Match([]byte(rawText))
 
 	// Build slot and return
-	slot = ReservationSlot{name, url, availability, regstered}
+	slot = ReservationSlot{name, availability, regstered, url}
 	return
 }
