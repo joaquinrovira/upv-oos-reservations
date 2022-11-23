@@ -17,6 +17,7 @@ const (
 	Pass         variable = "UPV_PASS"
 	ActivityType variable = "UPV_ACTIVITY_TYPE"
 	ActivityCode variable = "UPV_ACTIVITY_CODE"
+	ConfigFile   variable = "CONFIG_FILE"
 )
 
 var requiredVariables = []variable{
@@ -27,6 +28,7 @@ var requiredVariables = []variable{
 var variableDefaults = map[variable]string{
 	ActivityType: "6607",
 	ActivityCode: "20705",
+	ConfigFile:   "./config.json",
 }
 
 func init() {
