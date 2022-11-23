@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
+	"github.com/joaquinrovira/upv-oos-reservations/internal/util"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
 	"github.com/joaquinrovira/upv-oos-reservations/lib"
 )
@@ -34,7 +34,7 @@ func (json TargetValueJSON) Parse() (target lib.TargetValue, err error) {
 	target = make(lib.TargetValue)
 
 	for k, v := range json {
-		weedkay, ok := daysOfWeek[k]
+		weedkay, ok := util.DaysOfWeek[k]
 		if !ok {
 			err = fmt.Errorf("unkown weekday '%s'", k)
 			return
@@ -42,14 +42,4 @@ func (json TargetValueJSON) Parse() (target lib.TargetValue, err error) {
 		target[weedkay] = v
 	}
 	return
-}
-
-var daysOfWeek = map[string]time.Weekday{
-	"Sunday":    time.Sunday,
-	"Monday":    time.Monday,
-	"Tuesday":   time.Tuesday,
-	"Wednesday": time.Wednesday,
-	"Thursday":  time.Thursday,
-	"Friday":    time.Friday,
-	"Saturday":  time.Saturday,
 }
