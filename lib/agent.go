@@ -80,9 +80,9 @@ func (a *Agent) Run() (err error) {
 	for day, target := range a.Cfg.Target {
 		err = a.handleTargetList(value, day, target)
 		if err != nil {
-			internal.Log().Err(err).Msg(fmt.Sprintf("unable to fulfill request for %v", target))
+			internal.Log().Err(err).Msg(fmt.Sprintf("unable to fulfill request for %v %v", day.String(), target))
 		} else {
-			internal.Log().Info().Msg(fmt.Sprintf("[OK] request %v %v fullfilled successfully", day.String(), target))
+			internal.Log().Info().Msg(fmt.Sprintf("request %v %v fullfilled successfully", day.String(), target))
 		}
 	}
 
