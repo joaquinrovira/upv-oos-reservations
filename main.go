@@ -3,7 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model"
+	"github.com/joaquinrovira/upv-oos-reservations/internal/model/daytime"
+	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
 	"github.com/joaquinrovira/upv-oos-reservations/lib"
 )
@@ -16,14 +17,14 @@ func main() {
 		User: user,
 		Pass: pass,
 		Target: lib.TargetValue{
-			time.Monday: []model.TimeRange{
+			time.Monday: []timerange.TimeRange{
 				{
-					StartTime: model.TimeOfDay{Hour: 20},
-					EndTime:   model.TimeOfDay{Hour: 22},
+					Start: daytime.DayTime{Hour: 16},
+					End:   daytime.DayTime{Hour: 17},
 				},
 				{
-					StartTime: model.TimeOfDay{Hour: 8},
-					EndTime:   model.TimeOfDay{Hour: 21},
+					Start: daytime.DayTime{Hour: 8},
+					End:   daytime.DayTime{Hour: 21},
 				},
 			},
 		},

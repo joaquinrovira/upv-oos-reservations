@@ -10,6 +10,8 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/foolin/pagser"
+	"github.com/joaquinrovira/upv-oos-reservations/internal/model/daytime"
+	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
 )
 
 type TableData struct {
@@ -81,7 +83,7 @@ func MarshalTable(data *TableData) (reservations *ReservationsWeek, err error) {
 	return
 }
 
-func parseTimeSlotsFromTable(data *TableData) (slotTimes []TimeRange, err error) {
+func parseTimeSlotsFromTable(data *TableData) (slotTimes []timerange.TimeRange, err error) {
 	for row := 0; row < len(data.Rows); row++ {
 		// For each row of the table, the first column contains the time slot description
 		// Time slot text follows the format 'XX:YY-AA:BB <some text>'
@@ -98,19 +100,19 @@ func parseTimeSlotsFromTable(data *TableData) (slotTimes []TimeRange, err error)
 		}
 
 		// Parse XX:YY
-		t0, err := ParseSlotTime(string(result[0]))
+		t0, err := daytime.Parse(string(result[0]))
 		if err != nil {
 			return nil, err
 		}
 
 		// Parse AA:BB
-		t1, err := ParseSlotTime(string(result[1]))
+		t1, err := daytime.Parse(string(result[1]))
 		if err != nil {
 			return nil, err
 		}
 
 		// Store time slot
-		slotTimeRange := TimeRange{t0, t1}
+		slotTimeRange := timerange.TimeRange{Start: t0, End: t1}
 		slotTimes = append(slotTimes, slotTimeRange)
 	}
 

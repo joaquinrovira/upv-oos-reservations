@@ -8,6 +8,7 @@ import (
 
 	"github.com/joaquinrovira/upv-oos-reservations/internal"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/model"
+	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/requests"
 )
 
@@ -28,7 +29,7 @@ to make a reservation in. The list is sorted by descreasing priority.
 If a slot is open within the first time range, a reservation will be
 executed for that slot.
 */
-type TargetValue map[time.Weekday][]model.TimeRange
+type TargetValue map[time.Weekday][]timerange.TimeRange
 
 func New(c Config) (a *Agent, err error) {
 	if err = checkConfig(c); err != nil {
@@ -83,7 +84,7 @@ func (a *Agent) Run() (err error) {
 	return err
 }
 
-func (a *Agent) handleTargetList(reservations *model.ReservationsWeek, day time.Weekday, targetList []model.TimeRange) (err error) {
+func (a *Agent) handleTargetList(reservations *model.ReservationsWeek, day time.Weekday, targetList []timerange.TimeRange) (err error) {
 	for _, target := range targetList {
 		err = a.handleTarget(reservations, day, target)
 
@@ -95,8 +96,8 @@ func (a *Agent) handleTargetList(reservations *model.ReservationsWeek, day time.
 	return fmt.Errorf("unable to fulfill target list")
 }
 
-func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Weekday, target model.TimeRange) error {
-	slot := reservations.SlotWithin(day, target)
+func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Weekday, timerange timerange.TimeRange) error {
+	slot := reservations.FindSlot(day, timerange)
 
 	// Validate slot
 	if slot == nil {
