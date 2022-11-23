@@ -18,6 +18,7 @@ const (
 	ActivityType variable = "UPV_ACTIVITY_TYPE"
 	ActivityCode variable = "UPV_ACTIVITY_CODE"
 	ConfigFile   variable = "CONFIG_FILE"
+	Debug        variable = "DEBUG"
 )
 
 var requiredVariables = []variable{
