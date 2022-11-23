@@ -10,6 +10,7 @@ import (
 	"github.com/joaquinrovira/upv-oos-reservations/internal/model"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/requests"
+	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
 )
 
 type Agent struct {
@@ -105,6 +106,11 @@ func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Week
 	}
 	if slot.Availability == 0 {
 		return fmt.Errorf("no availability on this slot")
+	}
+
+	if vars.Get(vars.Debug) != "" {
+		internal.Log().Debug().Msg("debug enabled, skipping sending reservation request")
+		return nil
 	}
 
 	// Send reservation request
