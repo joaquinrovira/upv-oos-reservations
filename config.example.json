@@ -1,0 +1,24 @@
+{
+  "Monday": [
+    { "Start": { "Hour": 20 }, "End": { "Hour": 23, "Minute": 59 } },
+    { "Start": { "Hour": 18 }, "End": { "Hour": 23, "Minute": 59 } }
+  ],
+  "Tuesday": [
+    { "Start": { "Hour": 20 }, "End": { "Hour": 23, "Minute": 59 } },
+    { "Start": { "Hour": 18 }, "End": { "Hour": 23, "Minute": 59 } }
+  ],
+  "Wednesday": [
+    { "Start": { "Hour": 20 }, "End": { "Hour": 23, "Minute": 59 } },
+    { "Start": { "Hour": 18 }, "End": { "Hour": 23, "Minute": 59 } }
+  ],
+  "Thursday": [
+    { "Start": { "Hour": 20 }, "End": { "Hour": 23, "Minute": 59 } },
+    { "Start": { "Hour": 18 }, "End": { "Hour": 23, "Minute": 59 } }
+  ],
+  "Friday": [
+    { "Start": { "Hour": 20 }, "End": { "Hour": 23, "Minute": 59 } },
+    { "Start": { "Hour": 18 }, "End": { "Hour": 23, "Minute": 59 } }
+  ],
+  "Saturday": [],
+  "Sunday": []
+}
