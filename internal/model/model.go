@@ -6,6 +6,7 @@ import (
 
 	"github.com/joaquinrovira/upv-oos-reservations/internal/model/daytime"
 	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
+	"github.com/joaquinrovira/upv-oos-reservations/internal/util"
 )
 
 type ReservationSlot struct {
@@ -33,4 +34,25 @@ func NewReservarionsWeek() *ReservationsWeek {
 	var r ReservationsWeek
 	r.Slots = make(map[time.Weekday][]ReservationSlot)
 	return &r
+}
+
+type Reservation struct {
+	Slot ReservationSlot
+	At   timerange.TimeRange
+}
+
+func (r *ReservationsWeek) GetReservations() (reservations map[time.Weekday]Reservation) {
+	reservations = make(map[time.Weekday]Reservation)
+
+	for _, day := range util.DaysOfWeek {
+		for idx, slot := range r.Slots[day] {
+			if slot.Reserved {
+				at := r.SlotTimes[idx]
+				reservations[day] = Reservation{slot, at}
+				break
+			}
+		}
+	}
+
+	return
 }
