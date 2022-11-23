@@ -71,8 +71,12 @@ func (a *Agent) Run() (err error) {
 		return err
 	}
 
-	// TODO: if you run the program twice, if can reserve two times in the same day
-	// FIX IT!
+	// Remove targets that have already been fulfilled
+	reservations := value.GetReservations()
+	for day := range reservations {
+		delete(a.Cfg.Target, day)
+	}
+
 	for day, target := range a.Cfg.Target {
 		err = a.handleTargetList(value, day, target)
 		if err != nil {
