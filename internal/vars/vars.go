@@ -10,23 +10,23 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type variable string
+type env string
 
 const (
-	User         variable = "UPV_USER"
-	Pass         variable = "UPV_PASS"
-	ActivityType variable = "UPV_ACTIVITY_TYPE"
-	ActivityCode variable = "UPV_ACTIVITY_CODE"
-	ConfigFile   variable = "CONFIG_FILE"
-	Debug        variable = "DEBUG"
+	User         env = "UPV_USER"
+	Pass         env = "UPV_PASS"
+	ActivityType env = "UPV_ACTIVITY_TYPE"
+	ActivityCode env = "UPV_ACTIVITY_CODE"
+	ConfigFile   env = "CONFIG_FILE"
+	Debug        env = "DEBUG"
 )
 
-var requiredVariables = []variable{
+var required = []env{
 	User,
 	Pass,
 }
 
-var variableDefaults = map[variable]string{
+var defaults = map[env]string{
 	ActivityType: "6607",
 	ActivityCode: "20705",
 	ConfigFile:   "./config.json",
@@ -41,7 +41,7 @@ func init() {
 
 func checkRequired() {
 	missingVars := false
-	for _, v := range requiredVariables {
+	for _, v := range required {
 		if os.Getenv(string(v)) == "" {
 			internal.Log().Error().Msg(fmt.Sprintf("missing environment variable '%s'", v))
 			missingVars = true
@@ -53,13 +53,13 @@ func checkRequired() {
 }
 
 func applyDefaults() {
-	for k, v := range variableDefaults {
-		if os.Getenv(string(k)) == "" {
+	for k, v := range defaults {
+		if os.Getenv(string(k)) == "" { // Apply defaults without overwriting existing values
 			os.Setenv(string(k), v)
 		}
 	}
 }
 
-func Get(v variable) string {
+func Get(v env) string {
 	return os.Getenv(string(v))
 }

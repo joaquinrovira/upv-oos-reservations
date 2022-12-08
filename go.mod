@@ -15,4 +15,5 @@ require (
 	github.com/spf13/cast v1.3.1 // indirect
 	golang.org/x/net v0.0.0-20210916014120-12bc252f5db8 // indirect
 	golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )

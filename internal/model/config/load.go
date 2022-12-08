@@ -39,7 +39,9 @@ func (json TargetValueJSON) Parse() (target lib.TargetValue, err error) {
 			err = fmt.Errorf("unkown weekday '%s'", k)
 			return
 		}
-		target[weedkay] = v
+		if len(v) != 0 {
+			target[weedkay] = v
+		}
 	}
 	return
 }

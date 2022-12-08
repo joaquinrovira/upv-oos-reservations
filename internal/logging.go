@@ -5,11 +5,20 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var log zerolog.Logger
 
 func init() {
+	// Setup rotating logfile
+	logfile := &lumberjack.Logger{
+		Filename:   "output.log",
+		MaxSize:    100, // 100 MB
+		MaxBackups: 3,   // 3 backup logs
+		MaxAge:     92,  // 3 months
+	}
+
 	// UNIX Time is faster and smaller than most timestamps
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
@@ -20,7 +29,7 @@ func init() {
 	log = zerolog.New(os.Stderr).With().Timestamp().Logger()
 
 	// log a human-friendly, colorized output
-	log = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
+	log = log.Output(zerolog.ConsoleWriter{Out: logfile, TimeFormat: time.RFC3339, NoColor: true})
 }
 
 func Log() *zerolog.Logger {

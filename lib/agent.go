@@ -66,6 +66,8 @@ func checkConfig(c Config) (err error) {
 func (a *Agent) Run() (err error) {
 	a.Login()
 
+	internal.Log().Debug().Msg("Running...")
+
 	value, err := a.GetReservationsData()
 	if err != nil {
 		return err
@@ -74,15 +76,16 @@ func (a *Agent) Run() (err error) {
 	// Remove targets that have already been fulfilled
 	reservations := value.GetReservations()
 	for day := range reservations {
+		internal.Log().Info().Msgf("%v already fulfilled in time slot %v, skipping", day.String(), reservations[day].At)
 		delete(a.Cfg.Target, day)
 	}
 
 	for day, target := range a.Cfg.Target {
-		err = a.handleTargetList(value, day, target)
-		if err != nil {
-			internal.Log().Err(err).Msg(fmt.Sprintf("unable to fulfill request for %v %v", day.String(), target))
+		target_err := a.handleTargetList(value, day, target)
+		if target_err != nil {
+			internal.Log().Err(target_err).Msgf("unable to fulfill request for %v %v", day.String(), target)
 		} else {
-			internal.Log().Info().Msg(fmt.Sprintf("request %v %v fullfilled successfully", day.String(), target))
+			internal.Log().Info().Msgf("request %v %v fullfilled successfully", day.String(), target)
 		}
 	}
 
@@ -98,7 +101,7 @@ func (a *Agent) handleTargetList(reservations *model.ReservationsWeek, day time.
 		}
 	}
 
-	return fmt.Errorf("unable to fulfill target list")
+	return err
 }
 
 func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Weekday, timerange timerange.TimeRange) error {
@@ -106,7 +109,7 @@ func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Week
 
 	// Validate slot
 	if slot == nil {
-		return fmt.Errorf("no time slot available")
+		return fmt.Errorf("no empty time slot available")
 	}
 	if slot.Availability == 0 {
 		return fmt.Errorf("no availability on this slot")
