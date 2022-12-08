@@ -6,11 +6,11 @@ import (
 	"net/http/cookiejar"
 	"time"
 
-	"github.com/joaquinrovira/upv-oos-reservations/internal"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/requests"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/timerange"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/requests"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
 )
 
 type Agent struct {
@@ -66,7 +66,7 @@ func checkConfig(c Config) (err error) {
 func (a *Agent) Run() (err error) {
 	a.Login()
 
-	internal.Log().Debug().Msg("Running...")
+	logging.Log().Debug().Msg("Running...")
 
 	value, err := a.GetReservationsData()
 	if err != nil {
@@ -76,16 +76,16 @@ func (a *Agent) Run() (err error) {
 	// Remove targets that have already been fulfilled
 	reservations := value.GetReservations()
 	for day := range reservations {
-		internal.Log().Info().Msgf("%v already fulfilled in time slot %v, skipping", day.String(), reservations[day].At)
+		logging.Log().Info().Msgf("%v already fulfilled in time slot %v, skipping", day.String(), reservations[day].At)
 		delete(a.Cfg.Target, day)
 	}
 
 	for day, target := range a.Cfg.Target {
 		target_err := a.handleTargetList(value, day, target)
 		if target_err != nil {
-			internal.Log().Err(target_err).Msgf("unable to fulfill request for %v %v", day.String(), target)
+			logging.Log().Err(target_err).Msgf("unable to fulfill request for %v %v", day.String(), target)
 		} else {
-			internal.Log().Info().Msgf("request %v %v fullfilled successfully", day.String(), target)
+			logging.Log().Info().Msgf("request %v %v fullfilled successfully", day.String(), target)
 		}
 	}
 
@@ -116,7 +116,7 @@ func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Week
 	}
 
 	if vars.Get(vars.Debug) != "" {
-		internal.Log().Debug().Msg("debug enabled, skipping sending reservation request")
+		logging.Log().Debug().Msg("debug enabled, skipping sending reservation request")
 		return nil
 	}
 

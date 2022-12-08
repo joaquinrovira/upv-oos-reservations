@@ -1,8 +1,8 @@
 package lib
 
 import (
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/requests"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/requests"
 )
 
 func (agent Agent) Login() error {
@@ -16,3 +16,8 @@ func (agent Agent) GetReservationsData() (*model.ReservationsWeek, error) {
 	reservations, _ := model.MarshalTable(&data)
 	return reservations, nil
 }
+
+// Agent
+// Read config
+// Register fsnotify to update on config changes
+// Ready to run

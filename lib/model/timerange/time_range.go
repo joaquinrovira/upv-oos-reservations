@@ -3,7 +3,7 @@ package timerange
 import (
 	"fmt"
 
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model/daytime"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/daytime"
 )
 
 type TimeRange struct {

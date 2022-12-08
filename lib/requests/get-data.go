@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
 )
 
 func GetReservationsData(c *http.Client) (res *http.Response, err error) {

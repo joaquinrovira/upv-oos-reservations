@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/util"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
 	"github.com/joaquinrovira/upv-oos-reservations/lib"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/timerange"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/util"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
 )
 
 func LoadConfig() (target lib.TargetValue, err error) {

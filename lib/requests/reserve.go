@@ -3,7 +3,7 @@ package requests
 import (
 	"net/http"
 
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model"
 )
 
 func ReserveSlot(c *http.Client, s *model.ReservationSlot) (res *http.Response, err error) {

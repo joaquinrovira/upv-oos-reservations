@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joaquinrovira/upv-oos-reservations/internal"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/exitcodes"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/exitcodes"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
 
 	"github.com/joho/godotenv"
 )
@@ -43,7 +43,7 @@ func checkRequired() {
 	missingVars := false
 	for _, v := range required {
 		if os.Getenv(string(v)) == "" {
-			internal.Log().Error().Msg(fmt.Sprintf("missing environment variable '%s'", v))
+			logging.Log().Error().Msg(fmt.Sprintf("missing environment variable '%s'", v))
 			missingVars = true
 		}
 	}

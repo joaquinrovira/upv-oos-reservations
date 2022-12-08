@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/timerange"
 )
 
 type SlotSearchStrategy int

@@ -1,9 +1,13 @@
 package main
 
 import (
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model/config"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/vars"
+	"sync"
+	"time"
+
 	"github.com/joaquinrovira/upv-oos-reservations/lib"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/config"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
+	"github.com/reugn/go-quartz/quartz"
 )
 
 func main() {
@@ -21,7 +25,21 @@ func main() {
 	// Initialize and run agent
 	if agent, err := lib.New(cfg); err != nil {
 		panic(err)
-	} else if err := agent.Run(); err != nil {
-		panic(err)
+	} else {
+		sched := quartz.NewStdScheduler()
+		wg := sync.WaitGroup{}
+		wg.Add(2)
+
+		sched.Start()
+		functionJob := quartz.NewFunctionJob(func() (int, error) {
+			defer wg.Done()
+			return 0, agent.Run()
+		})
+		sched.ScheduleJob(functionJob, quartz.NewSimpleTrigger(time.Second*5))
+		wg.Wait()
+		sched.Stop()
 	}
+	//  else if err := agent.Run(); err != nil {
+	// 	panic(err)
+	// }
 }

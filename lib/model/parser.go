@@ -10,8 +10,8 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/foolin/pagser"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model/daytime"
-	"github.com/joaquinrovira/upv-oos-reservations/internal/model/timerange"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/daytime"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/timerange"
 )
 
 type TableData struct {
