@@ -102,7 +102,7 @@ func (a *Agent) handleTargetList(reservations *model.ReservationsWeek, day time.
 }
 
 func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Weekday, timerange timerange.TimeRange) error {
-	slot := reservations.FindSlot(day, timerange)
+	slot := reservations.FindSlotWithStrategy(day, timerange, model.FirstAvailable)
 
 	// Validate slot
 	if slot == nil {
