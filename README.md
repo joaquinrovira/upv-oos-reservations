@@ -34,8 +34,6 @@ go build .
 
 There are two main aspects of the application to configure. Firstly, the environment variables. They can either be set normally **or by writing to a `.env` file**. Environment variable take precedence over `.env` values. For a full set of configurable environment variables, check out [`vars.go`](./lib/vars/vars.go).
 
-<center>
-
 | Variable            | Description                                                                                                  |
 | ------------------- | ------------------------------------------------------------------------------------------------------------ |
 | `UPV_USER`          | Intranet username                                                                                            |
@@ -43,8 +41,6 @@ There are two main aspects of the application to configure. Firstly, the environ
 | `UPV_ACTIVITY_TYPE` | Internal activity type (see section below for more info)                                                     |
 | `UPV_ACTIVITY_CODE` | Internal activity code (see section below for more info)                                                     |
 | `CUSTOM_CRON`       | Allows the user to define a custom [cron trigger](https://github.com/reugn/go-quartz#cron-expression-format) |
-
-</center>
 
 Besides the environment variables, you will have to tell the program when you would like your reservations. The agent will read (and watch for changes of) a file named `config.json`. The file `config.example.json` contains an example of the required content:
 
