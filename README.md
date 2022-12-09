@@ -2,6 +2,9 @@
 
 <p align="center">
     <h1>UPV Office of Sports Reservations Agent</h1>
+</p>
+    
+<p align="center">
     <a href="https://www.upv.es/" target="blank"><img src="./.img/UPV.jpg"  height="100" alt="UPV Logo" /></a>
     <img src="./.img/muscles-clipart-ghoper.gif" height="100"  />
 </p>
