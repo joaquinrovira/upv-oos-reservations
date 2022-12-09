@@ -24,12 +24,12 @@ const (
 var required = []env{
 	User,
 	Pass,
+	ActivityType,
+	ActivityCode,
 }
 
 var defaults = map[env]string{
-	ActivityType: "6607",
-	ActivityCode: "20705",
-	ConfigFile:   "./config.json",
+	ConfigFile: "./config.json",
 }
 
 func init() {
