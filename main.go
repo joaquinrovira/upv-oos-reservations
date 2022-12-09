@@ -1,8 +1,7 @@
 package main
 
 import (
-	"github.com/joaquinrovira/upv-oos-reservations/lib"
-	"github.com/joaquinrovira/upv-oos-reservations/lib/model/config"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/agent"
 	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
 )
 
@@ -10,18 +9,14 @@ func main() {
 	// Build config
 	user := vars.Get(vars.User)
 	pass := vars.Get(vars.Pass)
+	configFile := vars.Get(vars.ConfigFile)
 
-	target, err := config.LoadConfig()
-	if err != nil {
-		panic(err)
-	}
-
-	cfg := lib.Config{User: user, Pass: pass, Target: target}
+	cfg := agent.Config{User: user, Pass: pass, ConfigFile: configFile}
 
 	// Initialize and run agent
-	if agent, err := lib.New(cfg); err != nil {
+	if agent, err := agent.New(cfg); err != nil {
 		panic(err)
-	} else if err := agent.Run(); err != nil {
+	} else if err := agent.RunWithScheduler(); err != nil {
 		panic(err)
 	}
 }

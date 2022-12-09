@@ -21,3 +21,11 @@ func (tr TimeRange) Validate() error {
 func (tr TimeRange) Contains(t daytime.DayTime) bool {
 	return tr.Start.Value() <= t.Value() && t.Value() < tr.End.Value()
 }
+
+func (tr TimeRange) String() string {
+	return fmt.Sprintf("%v-%v", tr.Start, tr.End)
+}
+
+func (tr TimeRange) Format(f fmt.State, c rune) {
+	f.Write([]byte(tr.String()))
+}

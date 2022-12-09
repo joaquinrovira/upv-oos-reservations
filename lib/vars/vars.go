@@ -43,7 +43,7 @@ func checkRequired() {
 	missingVars := false
 	for _, v := range required {
 		if os.Getenv(string(v)) == "" {
-			logging.Log().Error().Msg(fmt.Sprintf("missing environment variable '%s'", v))
+			logging.Out().Error().Msg(fmt.Sprintf("missing environment variable '%s'", v))
 			missingVars = true
 		}
 	}

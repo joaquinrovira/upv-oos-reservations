@@ -1,4 +1,4 @@
-package lib
+package agent
 
 import (
 	"github.com/joaquinrovira/upv-oos-reservations/lib/model"
@@ -6,11 +6,11 @@ import (
 )
 
 func (agent Agent) Login() error {
-	return requests.Login(agent.Client, agent.Cfg.User, agent.Cfg.Pass)
+	return requests.Login(agent.client, agent.cfg.User, agent.cfg.Pass)
 }
 
 func (agent Agent) GetReservationsData() (*model.ReservationsWeek, error) {
-	res, _ := requests.GetReservationsData(agent.Client)
+	res, _ := requests.GetReservationsData(agent.client)
 	selection, _ := model.FindTable(res)
 	data, _ := model.ParseHTMLTable(selection)
 	reservations, _ := model.MarshalTable(&data)

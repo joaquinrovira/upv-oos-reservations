@@ -2,15 +2,28 @@ package logging
 
 import (
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/rs/zerolog"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var log zerolog.Logger
+var logFile zerolog.Logger
+var out zerolog.Logger
+var logfile string = "output.log"
 
 func init() {
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix // UNIX Time is faster and smaller than most timestamps
+	setupOut()
+	setupLogFile()
+}
+
+func setupLogFile() {
+	logfilePath, _ := filepath.Abs(logfile)
+	Out().Info().Msgf("logging activity in %s", logfilePath)
+
 	// Setup rotating logfile
 	logfile := &lumberjack.Logger{
 		Filename:   "output.log",
@@ -19,19 +32,21 @@ func init() {
 		MaxAge:     92,  // 3 months
 	}
 
-	// UNIX Time is faster and smaller than most timestamps
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-
-	// default level is info, unless debug flag is present
-	zerolog.SetGlobalLevel(zerolog.DebugLevel)
-
-	// initialize internal logger
-	log = zerolog.New(os.Stderr).With().Timestamp().Logger()
-
-	// log a human-friendly, colorized output
-	log = log.Output(zerolog.ConsoleWriter{Out: logfile, TimeFormat: time.RFC3339, NoColor: true})
+	logFile = zerolog.New(os.Stderr).With().Timestamp().Logger()
+	logFile = logFile.Output(zerolog.ConsoleWriter{Out: logfile, TimeFormat: time.RFC3339, NoColor: true})
 }
 
-func Log() *zerolog.Logger {
-	return &log
+func setupOut() {
+	// initialize internal logger
+	out = zerolog.New(os.Stderr).With().Timestamp().Logger()
+
+	// log a human-friendly, colorized output
+	out = out.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339})
+}
+
+func LogFile() *zerolog.Logger {
+	return &logFile
+}
+func Out() *zerolog.Logger {
+	return &out
 }
