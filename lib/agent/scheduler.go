@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
 	"github.com/joaquinrovira/upv-oos-reservations/lib/util"
@@ -11,6 +12,8 @@ import (
 
 func (a *Agent) Run() (err error) {
 	a.Login()
+
+	targets := a.target.Clone()
 
 	logging.LogFile().Debug().Msg("Running...")
 
@@ -23,10 +26,22 @@ func (a *Agent) Run() (err error) {
 	reservations := value.GetReservations()
 	for day := range reservations {
 		logging.LogFile().Info().Msgf("%v already fulfilled in time slot %v, skipping", day.String(), reservations[day].At)
-		delete(*a.target, day)
+		delete(targets, day)
 	}
 
-	for day, target := range *a.target {
+	// Remove targets for today or the days before
+	today := time.Now().Weekday()
+	if today != time.Saturday {
+		logging.LogFile().Info().Msgf("today is %v, avoiding already gone weekdays (including today)", today.String())
+		for day := range targets {
+			if day <= today {
+				logging.LogFile().Info().Msgf("skipping %v", day.String())
+				delete(targets, day)
+			}
+		}
+	}
+
+	for day, target := range targets {
 		target_err := a.handleTargetList(value, day, target)
 		if target_err != nil {
 			logging.LogFile().Err(target_err).Msgf("unable to fulfill request for %v %v", day.String(), target)

@@ -18,6 +18,15 @@ executed for that slot.
 */
 type TargetValue map[time.Weekday][]timerange.TimeRange
 
+func (t *TargetValue) Clone() TargetValue {
+	newTargetValue := make(TargetValue)
+
+	for k, v := range *t {
+		newTargetValue[k] = v
+	}
+	return newTargetValue
+}
+
 // Returns error for invalid configurations
 func CheckConfig(target TargetValue) (err error) {
 	for _, trList := range target {

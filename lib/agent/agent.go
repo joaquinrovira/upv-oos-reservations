@@ -12,7 +12,7 @@ import (
 
 type Agent struct {
 	cfg    Config
-	target *config.TargetValue
+	target config.TargetValue
 	client *http.Client
 	ctx    context.Context
 	cancel context.CancelFunc
@@ -43,7 +43,7 @@ func New(c Config) (a *Agent, err error) {
 
 	// Build agent
 	ctx, cancel := context.WithCancel(context.Background())
-	a = &Agent{cfg: c, target: &target, client: &client, ctx: ctx, cancel: cancel}
+	a = &Agent{cfg: c, target: target, client: &client, ctx: ctx, cancel: cancel}
 
 	// Register interrupt listener
 	ch := make(chan os.Signal, 1)

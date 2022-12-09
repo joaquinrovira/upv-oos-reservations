@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type DayTime struct {
@@ -46,6 +47,10 @@ func New(hours, minutes uint8) (t DayTime, err error) {
 	}
 
 	return
+}
+
+func FromTime(src time.Time) (t DayTime, err error) {
+	return New(uint8(src.Hour()), uint8(src.Minute()))
 }
 
 func FromString(hours, minutes string) (t DayTime, err error) {

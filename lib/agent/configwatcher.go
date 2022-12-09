@@ -34,7 +34,7 @@ func (a *Agent) ConfigWatch() {
 				if err != nil {
 					logging.Out().Error().Err(err).Msg("error loading new config")
 				} else {
-					a.target = &target
+					a.target = target
 					logging.Out().Info().Interface("target", target).Msg("new config loaded successfully")
 				}
 			}
