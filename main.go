@@ -16,7 +16,10 @@ func main() {
 	// Initialize and run agent
 	if agent, err := agent.New(cfg); err != nil {
 		panic(err)
-	} else if err := agent.RunWithScheduler(); err != nil {
+	} else if err = agent.Run(); err != nil { // Run once on startup
+		panic(err)
+	} else if err := agent.RunWithScheduler(); err != nil { // Run on a schedule
 		panic(err)
 	}
+
 }
