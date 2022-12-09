@@ -1,13 +1,12 @@
-<center>
 
-# UPV Office of Sports Reservations Agent
 
-<img src="./.img/UPV.jpg"  height="100" />
-<img src="./.img/muscles-clipart-ghoper.gif" height="100"  />
+<p align="center">
+    <h1>UPV Office of Sports Reservations Agent</h1>
+    <a href="https://www.upv.es/" target="blank"><img src="./.img/UPV.jpg"  height="100" alt="UPV Logo" /></a>
+    <img src="./.img/muscles-clipart-ghoper.gif" height="100"  />
+</p>
 
-</center>
-
-An attempt at automating the weekly reservations for the Universitat Politècnica de València's Office of Sports, written in Go.
+<p align="center">An attempt at automating the weekly reservations for the <a href="https://www.upv.es/entidades/AD/" target="blank">Universitat Politècnica de València's Office of Sports</a>, written in <a href="https://go.dev" target="blank">Go</a>.</p>
 
 ## Why
 
@@ -17,7 +16,7 @@ In order to reduce the time spent checking for reservation, I decided to build t
 
 ## Building the agent
 
-Install `go` following the [official instructions](https://go.dev/doc/install) and build the binary with 
+Install `go` following the [official instructions](https://go.dev/doc/install). Then, build the binary with the following commands:
 
 ```bash
 # Clone the repo
