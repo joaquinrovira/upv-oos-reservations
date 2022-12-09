@@ -66,6 +66,12 @@ func (a *Agent) RunWithScheduler() (err error) {
 		triggers = append(triggers, trigger)
 	}
 
+	if vars.Has(vars.CustomCron) {
+		trigger := util.CronCustom
+		logging.Out().Debug().Msgf("custom cron detected, including schedule (%v)", trigger.Expression())
+		triggers = append(triggers, trigger)
+	}
+
 	for _, trigger := range triggers {
 		sched.ScheduleJob(runJob, trigger)
 		logging.Out().Info().Msgf("registered job trigger %-20v i.e., %v", fmt.Sprintf("(%v)", trigger.Expression()), trigger.Description())

@@ -17,6 +17,7 @@ const (
 	Pass         env = "UPV_PASS"
 	ActivityType env = "UPV_ACTIVITY_TYPE"
 	ActivityCode env = "UPV_ACTIVITY_CODE"
+	CustomCron   env = "CUSTOM_CRON"
 	ConfigFile   env = "CONFIG_FILE"
 	Debug        env = "DEBUG"
 )
