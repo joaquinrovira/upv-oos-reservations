@@ -66,13 +66,15 @@ As the university does not have a public API, these values must be scraped or ob
 
 Go to the [ON-LINE registration of Sportive Activities](https://intranet.upv.es/pls/soalu/sic_depact.HSemActividades) and select your chosen `Propgram` and `Activity` in the website's form. The new URL will contain multiple parameters. Key among them are `p_tipoact` and `p_codacti`, corresponding to `UPV_ACTIVITY_TYPE` and `UPV_ACTIVITY_CODE` respectively. See the image below for a visual explanation.
 
-<center>
-
 <img src="./.img/obtaining-the-codes.png"/>
 
-</center>
 
+## Contributing
+
+As there is no official public API, the agent may break at any time and I make no promises on maintaining the project. 
+In case the URL need to be changed, please modify the code in [`lib/requests`](./lib/requests/) and make a pull request.
 
 ## Disclaimer
 
-The UPV **does not authorize** the use of this program. This has been published merely for **educational purposes only**. Also, as there is no official public API, the agent may break at any time and I make no promises on maintaining the project. In case the URL need to be changed, please modify the code in [`lib/requests`](./lib/requests/) and make a pull request.
+The UPV **does not authorize** the use of this program. This has been published merely for **educational purposes only**. 
+
