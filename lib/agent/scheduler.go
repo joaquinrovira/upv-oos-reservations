@@ -60,7 +60,7 @@ func (a *Agent) RunWithScheduler() (err error) {
 
 	triggers := []*util.CronTrigger{util.CronSaturdayAt10, util.CronEvery15Minutes}
 
-	if vars.Get(vars.Debug) != "" {
+	if vars.Has(vars.Debug) {
 		trigger := util.CronEvery15Seconds
 		logging.Out().Debug().Msgf("debug enabled, including high-frequency schedule (%v)", trigger.Expression())
 		triggers = append(triggers, trigger)

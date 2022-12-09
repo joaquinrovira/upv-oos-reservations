@@ -63,3 +63,7 @@ func applyDefaults() {
 func Get(v env) string {
 	return os.Getenv(string(v))
 }
+
+func Has(v env) bool {
+	return os.Getenv(string(v)) != ""
+}

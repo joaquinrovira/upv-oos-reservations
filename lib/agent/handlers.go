@@ -34,7 +34,7 @@ func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Week
 		return fmt.Errorf("no availability on this slot")
 	}
 
-	if vars.Get(vars.Debug) != "" {
+	if vars.Has(vars.Debug) {
 		logging.LogFile().Debug().Msg("debug enabled, skipping sending reservation request")
 		return nil
 	}
