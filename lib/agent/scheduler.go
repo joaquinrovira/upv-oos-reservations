@@ -52,6 +52,7 @@ func (a *Agent) Run() (err error) {
 
 	return err
 }
+
 func (a *Agent) RunWithScheduler() (err error) {
 	sched := quartz.NewStdScheduler()
 	sched.Start()

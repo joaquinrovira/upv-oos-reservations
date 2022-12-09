@@ -14,6 +14,10 @@ In July of 2022 the Office of Sports announces that the university's sports faci
 
 In order to reduce the time spent checking for reservation, I decided to build this tool. It automates the reservation process. Also works as an excuse to learn a new programming language I've had my eye on for a while. 
 
+## How it works
+
+Once configured (see below for details), the agent run on a set schedule. It uses the amazing `github.com/reugn/go-quartz` library to define two basic triggers - every 15 minutes and every Saturday a 10AM with increased frequency. This increases the odds of finding available slots for the desired activity. The method `(a *Agent) RunWithScheduler()` describes how the triggers are set-up and `(a *Agent) Run()` describes the process of making the reservations.
+
 ## Building the agent
 
 Install `go` following the [official instructions](https://go.dev/doc/install). Then, build the binary with the following commands:
