@@ -25,7 +25,7 @@ WORKDIR ${WORKDIR}
 # Copy executable binary
 COPY --from=build --chown=${RUNTIME_USER}:${RUNTIME_USER} ${WORKDIR}/${BIN_NAME} .
 
-# Include exmaple config file
+# Include example config file
 COPY --chown=${RUNTIME_USER}:${RUNTIME_USER} config.example.json . 
 
 ENV WORKDIR ${WORKDIR}
