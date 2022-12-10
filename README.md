@@ -58,7 +58,7 @@ Besides the environment variables, you will have to tell the program when you wo
 }
 ```
 
-Each day of the week (the key) maps to a list of preferred time ranges. Time ranges that come before are assumed to be preferred to time ranges that come later. In this example, the agent would try to make a reservation in a slot in the 20:00-23:59 range. If there are no available slots, it will try in the 18:00-23:59 time range. Valid weekdays are `Monday`, `Tuesday`, `Wednesday`, `Thursday`, `Saturday` and `Sunday`
+Each day of the week (the key) maps to a list of preferred time ranges. Time ranges that come before are assumed to be preferred to time ranges that come later. In this example, the agent would try to make a reservation in a slot in the 20:00-23:59 range. If there are no available slots, it will try in the 18:00-23:59 time range. Valid weekdays are `Monday`, `Tuesday`, `Wednesday`, `Thursday`, `Saturday` and `Sunday`. Once the agent is running, the configuration file can be modified and the updated configuration will be applied instead. This is done by watching for changes with the `github.com/fsnotify/fsnotify` package.
 
 ### How to obtain `UPV_ACTIVITY_TYPE` and `UPV_ACTIVITY_CODE`
 
