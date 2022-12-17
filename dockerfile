@@ -3,6 +3,7 @@ ARG RUNTIME_USER="user"
 ARG WORKDIR="/app"
 
 FROM golang:alpine as build
+
 # https://github.com/moby/moby/issues/37622#issuecomment-412101935
 ARG BIN_NAME
 ARG WORKDIR

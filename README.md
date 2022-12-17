@@ -18,6 +18,17 @@ In order to reduce the time spent making reservations, I decided to build a tool
 
 Once configured (see below for details), the agent runs on a set schedule. It uses the amazing `github.com/reugn/go-quartz` library to define two basic triggers — every 15 minutes and every Saturday a 10AM with increased frequency. This maximizes the odds of finding available slots for the desired activity. The method [`(a *Agent) RunWithScheduler()`](./lib/agent/scheduler.go#L56) and [`(a *Agent) Run()`](./lib/agent/scheduler.go#L13) describe how the triggers are set-up and the process of actualliy making the reservations respectively.
 
+## Running with Docker
+
+Read the sections below for configuration details. Once configured you can run the reservation agent a such:
+
+``` bash
+docker run -d --restart=always                    \
+  -v /path/to/local/config.json:/app/config.json  \
+  --env-file .env                                 \
+  joaquinrovira/upv-oos-reservations:latest
+```
+
 ## Building the agent
 
 Install `go` following the [official instructions](https://go.dev/doc/install). Then, build the binary with the following commands:
