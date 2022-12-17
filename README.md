@@ -6,17 +6,17 @@
     <img src="./.img/muscles-clipart-ghoper.gif" height="100"  />
 </p>
 
-<p align="center">An attempt at automating the weekly reservations for the <a href="https://www.upv.es/entidades/AD/" target="blank">Universitat Politècnica de València's Office of Sports</a>, written in <a href="https://go.dev" target="blank">Go</a>.</p>
+<p align="center">An attempt at automating weekly reservations for the <a href="https://www.upv.es/entidades/AD/" target="blank">Universitat Politècnica de València's Office of Sports</a>, written in <a href="https://go.dev" target="blank">Go</a>.</p>
 
 ## Why
 
-In July of 2022 the Office of Sports announces that the university's sports facilities will be freely available for all students and associated personnel. Although all activities are free there is a limited availability for each. Some activities follow a first-come first-served policy. Others however, follow a weekly open call for reservations, beggining every Saturday at 10:00. For highly demanded activities, they run out of available slots quickly (in a matter of minutes) and people may cancel at any time during the week (up to 1 hour before the activity starts).
+In July of 2022, the Office of Sports announced that the university's sports facilities will be available free of charge for all students and associated personnel. Although all activities are free, there is limited availability. Some activities follow a first-come first-served policy. Others however, follow a weekly open call for reservations, beggining every Saturday at 10:00. For highly demanded activities, they run out of available slots quickly — in a matter of minutes.
 
-In order to reduce the time spent checking for reservation, I decided to build this tool. It automates the reservation process. Also works as an excuse to learn a new programming language I've had my eye on for a while. 
+In order to reduce the time spent making reservations, I decided to build a tool that automates the process. Also, serves as an excuse to learn a new programming language. 
 
 ## How it works
 
-Once configured (see below for details), the agent run on a set schedule. It uses the amazing `github.com/reugn/go-quartz` library to define two basic triggers - every 15 minutes and every Saturday a 10AM with increased frequency. This increases the odds of finding available slots for the desired activity. The method `(a *Agent) RunWithScheduler()` describes how the triggers are set-up and `(a *Agent) Run()` describes the process of making the reservations.
+Once configured (see below for details), the agent runs on a set schedule. It uses the amazing `github.com/reugn/go-quartz` library to define two basic triggers — every 15 minutes and every Saturday a 10AM with increased frequency. This maximizes the odds of finding available slots for the desired activity. The method [`(a *Agent) RunWithScheduler()`](./lib/agent/scheduler.go#L56) and [`(a *Agent) Run()`](./lib/agent/scheduler.go#L13) describe how the triggers are set-up and the process of actualliy making the reservations respectively.
 
 ## Building the agent
 
@@ -36,7 +36,7 @@ go build .
 
 ## How to configure the agent
 
-There are two main aspects of the application to configure. Firstly, the environment variables. They can either be set normally **or by writing to a `.env` file**. Environment variable take precedence over `.env` values. For a full set of configurable environment variables, check out [`vars.go`](./lib/vars/vars.go).
+There are two configurable aspects of the application. First, environment variables. They can either be set normally or by writing to a `.env` file. Environment variable take precedence over `.env` values. For a full set of configurable environment variables, check out [`vars.go`](./lib/vars/vars.go).
 
 | Variable            | Description                                                                                                  |
 | ------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -46,7 +46,7 @@ There are two main aspects of the application to configure. Firstly, the environ
 | `UPV_ACTIVITY_CODE` | Internal activity code (see section below for more info)                                                     |
 | `CUSTOM_CRON`       | Allows the user to define a custom [cron trigger](https://github.com/reugn/go-quartz#cron-expression-format) |
 
-Besides the environment variables, you will have to tell the program when you would like your reservations. The agent will read (and watch for changes of) a file named `config.json`. The file `config.example.json` contains an example of the required content:
+Besides environment variables, you will have to tell the program when you would like your reservations. The agent will read (and watch for changes of) a file named `config.json`. The file [`config.example.json`](./config.example.json) contains an example of the required content:
 
 ```json
 {
@@ -58,7 +58,7 @@ Besides the environment variables, you will have to tell the program when you wo
 }
 ```
 
-Each day of the week (the key) maps to a list of preferred time ranges. Time ranges that come before are assumed to be preferred to time ranges that come later. In this example, the agent would try to make a reservation in a slot in the 20:00-23:59 range. If there are no available slots, it will try in the 18:00-23:59 time range. Valid weekdays are `Monday`, `Tuesday`, `Wednesday`, `Thursday`, `Saturday` and `Sunday`. Once the agent is running, the configuration file can be modified and the updated configuration will be applied instead. This is done by watching for changes with the `github.com/fsnotify/fsnotify` package.
+Each weekday maps to a list of preferred time ranges. Time ranges are assumed to be sorted by decreasing preference. In this example, the agent would try to make a reservation in a slot within the 20:00-23:59 range. If there are no available slots, it will try in the 18:00-23:59 time range. Valid weekdays are `Monday`, `Tuesday`, `Wednesday`, `Thursday`, `Saturday` and `Sunday`. Once the agent is running, the configuration file can be modified and the updated configuration will be applied instead. This is done by watching for changes with the `github.com/fsnotify/fsnotify` package.
 
 ### How to obtain `UPV_ACTIVITY_TYPE` and `UPV_ACTIVITY_CODE`
 
@@ -71,10 +71,9 @@ Go to the [ON-LINE registration of Sportive Activities](https://intranet.upv.es/
 
 ## Contributing
 
-As there is no official public API, the agent may break at any time and I make no promises on maintaining the project. 
-In case the URL need to be changed, please modify the code in [`lib/requests`](./lib/requests/) and make a pull request.
+As there is no official public API, the agent may break at any time. Pull requests are welcome.
 
 ## Disclaimer
 
-The UPV **does not authorize** the use of this program. This has been published merely for **educational purposes only**. 
+The UPV **does not authorize** the use of this program. This has been published for **educational purposes only**. 
 
