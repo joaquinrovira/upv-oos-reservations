@@ -12,5 +12,5 @@ jobs:
       - name: Publish to DockerHub
         run: |
           docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" -p "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
-          docker image build -t piturriti1/upv-oos-reservations:latest .
-          docker push piturriti1/upv-oos-reservations:latest
+          docker image build -t "${{ secrets.DOCKER_HUB_USERNAME }}"/upv-oos-reservations:latest .
+          docker push "${{ secrets.DOCKER_HUB_USERNAME }}"/upv-oos-reservations:latest
