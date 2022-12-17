@@ -5,7 +5,7 @@
     <a href="https://www.upv.es/" target="blank"><img src="./.img/UPV.jpg"  height="100" alt="UPV Logo" /></a>
     <img src="./.img/muscles-clipart-ghoper.gif" height="100"  />
 </p>
-
+ 
 <p align="center">An attempt at automating weekly reservations for the <a href="https://www.upv.es/entidades/AD/" target="blank">Universitat Politècnica de València's Office of Sports</a>, written in <a href="https://go.dev" target="blank">Go</a>.</p>
 
 ## Why
