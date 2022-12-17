@@ -22,7 +22,7 @@ func init() {
 
 func setupLogFile() {
 	logfilePath, _ := filepath.Abs(logfile)
-	Out().Info().Msgf("logging activity in %s", logfilePath)
+	Out().Info().Msgf("logging activity to %s", logfilePath)
 
 	// Setup rotating logfile
 	logfile := &lumberjack.Logger{
