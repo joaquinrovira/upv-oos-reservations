@@ -23,12 +23,15 @@ Once configured (see below for details), the agent runs on a set schedule. It us
 Read the sections below for configuration details. This repository automatically publishes the contents of the main branch to `joaquinrovira/upv-oos-reservations:latest`and includes multi-architecture support for Linux hosts with `amd64`,`arm64` and `arm/v7` architectures. Once configured you can run the reservation agent a such:
 
 ``` bash
-docker run -d --restart=always                    \
-  -v /path/to/local/config.json:/app/config.json  \
-  --env-file .env                                 \
-  --name upv-oos-reservations                     \
-  joaquinrovira/upv-oos-reservations:latest
+docker run -d --restart=always                                      \
+  -v /path/to/local/config.json:/app/config.json                    \
+  --env-file .env                                                   \
+  --name upv-oos-reservations                                       \
+  -e TZ=`timedatectl show | grep "^Timezone=.*\$" | cut -d '=' -f2` \
+  joaquinrovira/upv-oos-reservations
 ```
+
+> *NOTE:* As this is time-sensitive software, **it is important to set the appropriate timezone**. This is done by setting the `TZ` environment variable to a valid value — from the `TZ database name` column of [the following table](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). You can make the container timezone match the host timezone by adding the environment value to the Docker container with the option `-e TZ=$(timedatectl show | grep "^Timezone=.*\$" | cut -d '=' -f2)`. Alternatively, it can be set manually to a value like `-e TZ=Etc/GMT+1`.
 
 You can check the agent logs with `docker logs upv-oos-reservations` and the reservations log with `docker exec upv-oos-reservations cat /app/output.log`
 

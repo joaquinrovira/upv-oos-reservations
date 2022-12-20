@@ -14,6 +14,8 @@ RUN go build -o ${BIN_NAME} .
 
 FROM alpine
 
+RUN apk add --no-cache tzdata
+
 ARG BIN_NAME
 ARG RUNTIME_USER
 ARG WORKDIR
