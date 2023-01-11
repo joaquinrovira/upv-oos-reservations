@@ -20,6 +20,7 @@ const (
 	CustomCron   env = "CUSTOM_CRON"
 	ConfigFile   env = "CONFIG_FILE"
 	Debug        env = "DEBUG"
+	TZ           env = "TZ" // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 )
 
 var required = []env{

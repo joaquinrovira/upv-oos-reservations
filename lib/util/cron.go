@@ -1,6 +1,8 @@
 package util
 
 import (
+	"time"
+
 	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
 	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
 	"github.com/lnquy/cron"
@@ -62,7 +64,7 @@ func NewCronTrigger(expr string) (ct *CronTrigger, err error) {
 		return
 	}
 
-	ct.quartz, err = quartz.NewCronTrigger(ct.expression)
+	ct.quartz, err = quartz.NewCronTriggerWithLoc(ct.expression, time.Local)
 	if err != nil {
 		return
 	}
