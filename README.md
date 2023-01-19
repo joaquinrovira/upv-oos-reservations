@@ -16,11 +16,11 @@ In order to reduce the time spent making reservations, I decided to build a tool
 
 ## 🤖 How it works
 
-Once configured (see below for details), the agent runs on a set schedule. It uses the amazing `github.com/reugn/go-quartz` library to define two basic triggers — every 15 minutes and every Saturday a 10AM with increased frequency. This maximizes the odds of finding available slots for the desired activity. The method [`(a *Agent) RunWithScheduler()`](./lib/agent/scheduler.go#L56) and [`(a *Agent) Run()`](./lib/agent/scheduler.go#L13) describe how the triggers are set-up and the process of actualliy making the reservations respectively.
+Once configured (see below for details), the agent runs on a set schedule. It uses the amazing `github.com/reugn/go-quartz` library to define two basic triggers — every 15 minutes and every Saturday a 10AM with increased frequency. This maximizes the odds of finding available slots for the desired activity. The methods [`(a *Agent) RunWithScheduler()`](./lib/agent/scheduler.go#L56) and [`(a *Agent) Run()`](./lib/agent/scheduler.go#L13) describe how the triggers are set-up and the process of actualliy making the reservations respectively.
 
 ## 🐋 Running with Docker
 
-Read the sections below for configuration details. This repository automatically publishes the contents of the main branch to `joaquinrovira/upv-oos-reservations:latest`and includes multi-architecture support for Linux hosts with `amd64`,`arm64` and `arm/v7` architectures. Once configured you can run the reservation agent a such:
+Read the sections below for configuration details. This repository automatically publishes the contents of the main branch to `joaquinrovira/upv-oos-reservations:latest`and includes multi-architecture support for Linux hosts with `amd64`,`arm64` and `arm/v7` architectures. Once configured you can run the reservation agent as follows:
 
 ``` bash
 docker run -d --restart=always                                      \
@@ -31,9 +31,9 @@ docker run -d --restart=always                                      \
   joaquinrovira/upv-oos-reservations
 ```
 
-> *NOTE:* As this is time-sensitive software, **it is important to set the appropriate timezone**. This is done by setting the `TZ` environment variable to a valid value — from the `TZ database name` column of [the following table](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). You can make the container timezone match the host timezone by adding the environment value to the Docker container with the option `-e TZ=$(timedatectl show | grep "^Timezone=.*\$" | cut -d '=' -f2)`. Alternatively, it can be set manually to a value like `-e TZ=Etc/GMT+1`.
+> *NOTE:* As this is time-sensitive software, **setting the appropriate timezone is vital**. This is done by setting the `TZ` environment variable to a valid value — from the `TZ database name` column of [the following table](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List). You can make the container timezone match the host timezone by adding the environment value to the Docker container with the option `-e TZ=$(timedatectl show | grep "^Timezone=.*\$" | cut -d '=' -f2)`. Alternatively, it can be set manually to a value like `-e TZ=Etc/GMT+1`.
 
-You can check the agent logs with `docker logs upv-oos-reservations` and the reservations log with `docker exec upv-oos-reservations cat /app/output.log`
+You can check the agent logs with `docker logs upv-oos-reservations` and the reservation logs with `docker exec upv-oos-reservations cat /app/output.log`
 
 ## 🏗️ Building the agent
 
@@ -53,7 +53,7 @@ go build .
 
 ## 🛠️ How to configure the agent
 
-There are two configurable aspects of the application. First, environment variables. They can either be set normally or by writing to a `.env` file. Environment variable take precedence over `.env` values. For a full set of configurable environment variables, check out [`vars.go`](./lib/vars/vars.go).
+There are two configurable aspects of the application. First, environment variables. They can either be set normally or by writing to a `.env` file. Environment variables take precedence over `.env` values. For a full set of configurable environment variables, check out [`vars.go`](./lib/vars/vars.go).
 
 | Variable            | Description                                                           |
 | ------------------- | --------------------------------------------------------------------- |
@@ -65,7 +65,7 @@ There are two configurable aspects of the application. First, environment variab
 
 > *NOTE:* Examples of cron expressions can be found in [`lib/util/cron.go`](lib/util/cron.go#L10-L13). For the exact syntax specification, check out [`reugn/go-quartz`](https://github.com/reugn/go-quartz#cron-expression-format).
 
-Besides environment variables, you will have to tell the program when you would like your reservations. The agent will read (and watch for changes of) a file named `config.json`. The file [`config.example.json`](./config.example.json) contains an example of the required content:
+Besides environment variables, you will have to specify when you would like your reservations. The agent will read (and watch for changes to) a file named `config.json`. The file [`config.example.json`](./config.example.json) contains an example of the required content:
 
 ```json
 {
