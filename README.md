@@ -55,13 +55,14 @@ go build .
 
 There are two configurable aspects of the application. First, environment variables. They can either be set normally or by writing to a `.env` file. Environment variables take precedence over `.env` values. For a full set of configurable environment variables, check out [`vars.go`](./lib/vars/vars.go).
 
-| Variable            | Description                                                           |
-| ------------------- | --------------------------------------------------------------------- |
-| `UPV_USER`          | (*required*) Intranet username                                        |
-| `UPV_PASS`          | (*required*) Intranet password                                        |
-| `UPV_ACTIVITY_TYPE` | (*required*) Internal activity type (see section below for more info) |
-| `UPV_ACTIVITY_CODE` | (*required*) Internal activity code (see section below for more info) |
-| `CUSTOM_CRON`       | (*optional*) Allows the user to define a custom cron trigger          |
+| Variable            | Description                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------ |
+| `UPV_USER`          | (*required*) Intranet username                                                                         |
+| `UPV_PASS`          | (*required*) Intranet password                                                                         |
+| `UPV_ACTIVITY_TYPE` | (*required*) Internal activity type (see section below for more info)                                  |
+| `UPV_ACTIVITY_CODE` | (*required*) Internal activity code (see section below for more info)                                  |
+| `UPV_LOGIN_TYPE`    | (*optional*) Login type, must be one of `STUDENT` or `PERSONNEL` (does not support for external users) |
+| `CUSTOM_CRON`       | (*optional*) Allows the user to define a custom cron trigger                                           |
 
 > *NOTE:* Examples of cron expressions can be found in [`lib/util/cron.go`](lib/util/cron.go#L10-L13). For the exact syntax specification, check out [`reugn/go-quartz`](https://github.com/reugn/go-quartz#cron-expression-format).
 
