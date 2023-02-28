@@ -6,6 +6,7 @@ import (
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/exitcodes"
 	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/login"
 
 	"github.com/joho/godotenv"
 )
@@ -15,6 +16,7 @@ type env string
 const (
 	User         env = "UPV_USER"
 	Pass         env = "UPV_PASS"
+	LoginType    env = "UPV_LOGIN_TYPE"
 	ActivityType env = "UPV_ACTIVITY_TYPE"
 	ActivityCode env = "UPV_ACTIVITY_CODE"
 	CustomCron   env = "CUSTOM_CRON"
@@ -31,6 +33,7 @@ var required = []env{
 }
 
 var defaults = map[env]string{
+	LoginType:  string(login.StudentLogin),
 	ConfigFile: "./config.json",
 }
 
