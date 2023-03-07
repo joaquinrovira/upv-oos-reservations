@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/daytime"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/timerange"
 	"github.com/joaquinrovira/upv-oos-reservations/lib/util"
 	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
 	"github.com/reugn/go-quartz/quartz"
@@ -41,6 +43,26 @@ func (a *Agent) Run() (err error) {
 		}
 	}
 
+	// Minimum 24hr buffer
+	logging.LogFile().Debug().Msg("Ensuring 24hr buffer")
+	tomorrow := time.Now().Add(time.Hour * 24).Weekday()
+	now, _ := daytime.FromTime(time.Now())
+	var newTargetValue []timerange.TimeRange
+	for _, rnge := range targets[tomorrow] {
+		if rnge.End.Value() < now.Value() {
+			logging.LogFile().Debug().Msgf("Avoiding %v %v", tomorrow, rnge)
+			continue
+		}
+
+		if rnge.Start.Value() < now.Value() {
+			logging.LogFile().Debug().Msgf("Modifying %v %v to %v", tomorrow, rnge, now)
+			rnge.Start = now
+		}
+		newTargetValue = append(newTargetValue, rnge)
+	}
+	targets[tomorrow] = newTargetValue
+
+	// Handle valid targets
 	for day, target := range targets {
 		target_err := a.handleTargetList(value, day, target)
 		if target_err != nil {
