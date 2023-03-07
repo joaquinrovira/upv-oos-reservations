@@ -64,6 +64,9 @@ func (a *Agent) Run() (err error) {
 
 	// Handle valid targets
 	for day, target := range targets {
+		if len(target) < 1 {
+			continue
+		}
 		target_err := a.handleTargetList(value, day, target)
 		if target_err != nil {
 			logging.LogFile().Err(target_err).Msgf("unable to fulfill request for %v %v", day.String(), target)
