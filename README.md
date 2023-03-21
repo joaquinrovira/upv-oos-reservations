@@ -16,7 +16,7 @@ In order to reduce the time spent making reservations, I decided to build a tool
 
 ## 🤖 How it works
 
-Once configured (see below for details), the agent runs on a set schedule. It uses the amazing `github.com/reugn/go-quartz` library to define two basic triggers — every 15 minutes and every Saturday a 10AM with increased frequency. This maximizes the odds of finding available slots for the desired activity. The methods [`(a *Agent) RunWithScheduler()`](./lib/agent/scheduler.go#L56) and [`(a *Agent) Run()`](./lib/agent/scheduler.go#L13) describe how the triggers are set-up and the process of actualliy making the reservations respectively.
+Once configured (see below for details), the agent runs on a set schedule. It uses the amazing `github.com/reugn/go-quartz` library to define two basic triggers — every 15 minutes and every Saturday a 10AM with increased frequency. This maximizes the odds of finding available slots for the desired activity. The methods [`(a *Agent) RunWithScheduler()`](./lib/agent/scheduler.go#L81) and [`(a *Agent) Run()`](./lib/agent/scheduler.go#L15) describe how the triggers are set-up and the process of actualliy making the reservations respectively.
 
 ## 🐋 Running with Docker
 
@@ -64,7 +64,7 @@ There are two configurable aspects of the application. First, environment variab
 | `UPV_LOGIN_TYPE`    | (*optional*) Login type, must be one of `STUDENT` or `PERSONNEL` (does not support for external users) |
 | `CUSTOM_CRON`       | (*optional*) Allows the user to define a custom cron trigger                                           |
 
-> *NOTE:* Examples of cron expressions can be found in [`lib/util/cron.go`](lib/util/cron.go#L10-L13). For the exact syntax specification, check out [`reugn/go-quartz`](https://github.com/reugn/go-quartz#cron-expression-format).
+> *NOTE:* Examples of cron expressions can be found in [`lib/util/cron.go`](lib/util/cron.go#L12-L15). For the exact syntax specification, check out [`reugn/go-quartz`](https://github.com/reugn/go-quartz#cron-expression-format).
 
 Besides environment variables, you will have to specify when you would like your reservations. The agent will read (and watch for changes to) a file named `config.json`. The file [`config.example.json`](./config.example.json) contains an example of the required content:
 
