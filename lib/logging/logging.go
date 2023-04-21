@@ -21,6 +21,10 @@ func init() {
 }
 
 func setupLogFile() {
+	if os.Getenv("NO_LOGFILE") != "" {
+		return
+	}
+
 	logfilePath, _ := filepath.Abs(logfile)
 	Out().Info().Msgf("logging activity to %s", logfilePath)
 
@@ -45,6 +49,11 @@ func setupOut() {
 }
 
 func LogFile() *zerolog.Logger {
+
+	if os.Getenv(string("NO_LOGFILE")) != "" {
+		return &out
+	}
+
 	return &logFile
 }
 func Out() *zerolog.Logger {
