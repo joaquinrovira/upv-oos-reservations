@@ -35,7 +35,7 @@ func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Week
 	}
 
 	if vars.Has(vars.Debug) {
-		logging.LogFile().Debug().Msg("debug enabled, skipping sending reservation request")
+		logging.Out().Debug().Msg("debug enabled - skipping sending reservation request")
 		return nil
 	}
 
