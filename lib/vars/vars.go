@@ -35,7 +35,7 @@ var required = []env{
 var defaults = map[env]string{
 	LoginType:   string(login.StudentLogin),
 	ConfigFile:  "./config.json",
-	DefaultCron: fmt.Sprintf("%s,%s", cronSaturdayAt10, cronEvery15Minutes),
+	DefaultCron: fmt.Sprintf("%s,%s", cronSaturdayEvery15Seconds, cronEvery15Minutes),
 }
 
 func init() {
@@ -78,3 +78,4 @@ var cronEveryHour string = "0 0 * * * *"
 var cronEvery10Seconds string = "*/10 * * * * *"
 var cronEvery15Minutes string = "0 */15 * * * *"
 var cronSaturdayAt10 string = "*/10 0-15 10 * * SAT"
+var cronSaturdayEvery15Seconds string = "*/30 * * * * SAT"
