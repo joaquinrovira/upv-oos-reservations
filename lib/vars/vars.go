@@ -13,16 +13,17 @@ import (
 type env string
 
 const (
-	User         env = "UPV_USER"
-	Pass         env = "UPV_PASS"
-	LoginType    env = "UPV_LOGIN_TYPE"
-	ActivityType env = "UPV_ACTIVITY_TYPE"
-	ActivityCode env = "UPV_ACTIVITY_CODE"
-	DefaultCron  env = "DEFAULT_CRON"
-	CustomCron   env = "CUSTOM_CRON"
-	ConfigFile   env = "CONFIG_FILE"
-	Debug        env = "DEBUG"
-	TZ           env = "TZ" // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
+	User          env = "UPV_USER"
+	Pass          env = "UPV_PASS"
+	LoginType     env = "UPV_LOGIN_TYPE"
+	ActivityType  env = "UPV_ACTIVITY_TYPE"
+	ActivityCode  env = "UPV_ACTIVITY_CODE"
+	DefaultCron   env = "DEFAULT_CRON"
+	CustomCron    env = "CUSTOM_CRON"
+	ConfigFile    env = "CONFIG_FILE"
+	Debug         env = "DEBUG"
+	HighFqTrigger env = "HIGH_FQ_TRIGGER"
+	TZ            env = "TZ" // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 )
 
 var required = []env{

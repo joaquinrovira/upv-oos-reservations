@@ -54,7 +54,7 @@ func init() {
 	}
 
 	// Add high-frequency job when DEBUG env var is present
-	if vars.Has(vars.Debug) {
+	if vars.Has(vars.HighFqTrigger) {
 		var cron string = "*/10 * * * * *" // Every 10 seconds
 		logging.Out().Info().Msgf("env.%-15s adding debug cron '%s'", vars.Debug, cron)
 		registerCron(cron)
