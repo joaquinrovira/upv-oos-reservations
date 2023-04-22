@@ -3,6 +3,7 @@ package agent
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
@@ -13,6 +14,7 @@ import (
 	"github.com/reugn/go-quartz/quartz"
 )
 
+var lock sync.Mutex
 var triggers []*util.CronTrigger
 
 func registerCron(cron string) {
@@ -59,15 +61,34 @@ func init() {
 	}
 }
 
+func runJobScheduleWrapper(a *Agent, trigger *util.CronTrigger) quartz.Job {
+	return quartz.NewFunctionJob(func() (int, error) {
+		logging.Out().Debug().Msgf("👀 \t %s", trigger.Expression())
+		lock.Lock()
+		logging.Out().Debug().Msgf("🔒 \t %s", trigger.Expression())
+		defer lock.Unlock()
+		defer logging.Out().Debug().Msgf("🔓 \t %s", trigger.Expression())
+
+		logging.Out().Info().Msg("+------------------------------------------+")
+		logging.Out().Info().Msgf("| Reservation trigger %20s |", trigger.Expression())
+		logging.Out().Info().Msg("+------------------------------------------+")
+
+		next, _ := trigger.NextFireTime(time.Now().UnixNano())
+		defer logging.Out().Debug().Msgf("next execution in %v", time.Until(time.Unix(0, next)).Round(time.Second))
+
+		return 0, a.Run()
+	})
+
+}
+
 func (a *Agent) RunWithScheduler() (err error) {
 	sched := quartz.NewStdScheduler()
-	runJob := quartz.NewFunctionJob(func() (int, error) { return 0, a.Run() })
 	sched.Start()
 
 	for _, trigger := range triggers {
-		sched.ScheduleJob(runJob, trigger)
+		job := runJobScheduleWrapper(a, trigger)
+		sched.ScheduleJob(job, trigger)
 	}
-
 	<-a.ctx.Done()
 	sched.Stop()
 
@@ -78,10 +99,6 @@ func (a *Agent) Run() (err error) {
 	a.Login()
 
 	targets := a.target.Clone()
-
-	logging.Out().Info().Msg("+---------------------+")
-	logging.Out().Info().Msg("| Reservation trigger |")
-	logging.Out().Info().Msg("+---------------------+")
 
 	value, err := a.GetReservationsData()
 	if err != nil {
