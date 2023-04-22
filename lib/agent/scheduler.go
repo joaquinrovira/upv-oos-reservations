@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
@@ -11,6 +12,67 @@ import (
 	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
 	"github.com/reugn/go-quartz/quartz"
 )
+
+var triggers []*util.CronTrigger
+
+func registerCron(cron string) {
+	if triggers == nil {
+		triggers = make([]*util.CronTrigger, 0)
+	}
+
+	if trigger, err := util.NewCronTrigger(strings.TrimSpace(cron)); err != nil {
+		logging.Out().Fatal().Msgf("'%s' %v", cron, err)
+	} else {
+		triggers = append(triggers, trigger)
+		logging.Out().Info().Msgf("registered job trigger %-20v", fmt.Sprintf("(%v)", trigger.Expression()))
+		logging.Out().Info().Msgf("description: \"%v\"", trigger.Description())
+	}
+}
+
+func init() {
+	logging.Out().Info().Msg("+-----------------------+")
+	logging.Out().Info().Msg("| Registering CRON jobs |")
+	logging.Out().Info().Msg("+-----------------------+")
+	tz, _ := time.Now().Zone()
+	logging.Out().Debug().Msgf("TZ=%v", tz)
+
+	// Parse and validate Crons
+	// Split by ',' and trim
+	var split = strings.FieldsFunc(vars.Get(vars.DefaultCron), func(r rune) bool { return r == ',' })
+	for _, cron := range split {
+		logging.Out().Info().Msgf("env.%-15s adding default cron '%s'", vars.DefaultCron, cron)
+		registerCron(cron)
+	}
+
+	// Parse and validate CustomCron
+	if vars.Has(vars.CustomCron) {
+		cron := vars.Get(vars.CustomCron)
+		logging.Out().Info().Msgf("env.%-15s adding custom cron '%s'", vars.CustomCron, cron)
+		registerCron(cron)
+	}
+
+	// Add high-frequency job when DEBUG env var is present
+	if vars.Has(vars.Debug) {
+		var cron string = "*/10 * * * * *" // Every 10 seconds
+		logging.Out().Info().Msgf("env.%-15s adding debug cron '%s'", vars.Debug, cron)
+		registerCron(cron)
+	}
+}
+
+func (a *Agent) RunWithScheduler() (err error) {
+	sched := quartz.NewStdScheduler()
+	runJob := quartz.NewFunctionJob(func() (int, error) { return 0, a.Run() })
+	sched.Start()
+
+	for _, trigger := range triggers {
+		sched.ScheduleJob(runJob, trigger)
+	}
+
+	<-a.ctx.Done()
+	sched.Stop()
+
+	return
+}
 
 func (a *Agent) Run() (err error) {
 	a.Login()
@@ -76,36 +138,7 @@ func (a *Agent) Run() (err error) {
 		}
 	}
 
+	logging.Out().Info().Msg("finished reservation attempt!")
+
 	return err
-}
-
-func (a *Agent) RunWithScheduler() (err error) {
-	sched := quartz.NewStdScheduler()
-	sched.Start()
-
-	runJob := quartz.NewFunctionJob(func() (int, error) { return 0, a.Run() })
-
-	triggers := []*util.CronTrigger{util.CronSaturdayAt10, util.CronEvery15Minutes}
-
-	if vars.Has(vars.Debug) {
-		trigger := util.CronEvery15Seconds
-		logging.Out().Debug().Msgf("debug enabled, including high-frequency schedule (%v)", trigger.Expression())
-		triggers = append(triggers, trigger)
-	}
-
-	if vars.Has(vars.CustomCron) {
-		trigger := util.CronCustom
-		logging.Out().Debug().Msgf("custom cron detected, including schedule (%v)", trigger.Expression())
-		triggers = append(triggers, trigger)
-	}
-
-	for _, trigger := range triggers {
-		sched.ScheduleJob(runJob, trigger)
-		logging.Out().Info().Msgf("registered job trigger %-20v i.e., %v", fmt.Sprintf("(%v)", trigger.Expression()), trigger.Description())
-	}
-
-	<-a.ctx.Done()
-	sched.Stop()
-
-	return
 }
