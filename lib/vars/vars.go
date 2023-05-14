@@ -22,6 +22,7 @@ const (
 	CustomCron    env = "CUSTOM_CRON"
 	ConfigFile    env = "CONFIG_FILE"
 	Debug         env = "DEBUG"
+	TestMode      env = "TEST_MODE"
 	HighFqTrigger env = "HIGH_FQ_TRIGGER"
 	TZ            env = "TZ" // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 )
