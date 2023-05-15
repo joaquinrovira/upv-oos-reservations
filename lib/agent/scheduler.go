@@ -130,12 +130,12 @@ func (a *Agent) Run() (err error) {
 	var newTargetValue []timerange.TimeRange
 	for _, rnge := range targets[tomorrow] {
 		if rnge.End.Value() < now.Value() {
-			logging.Out().Debug().Msgf("%-10v (avoiding) range %v with less than 24h reservation margin", tomorrow, rnge)
+			logging.Out().Info().Msgf("%-10v (avoiding) range %v with less than 24h reservation margin", tomorrow, rnge)
 			continue
 		}
 
 		if rnge.Start.Value() < now.Value() {
-			logging.Out().Debug().Msgf("%-10v (modifying) range %v to  range %v to ensure 24h reservation margin", tomorrow, rnge, now)
+			logging.Out().Info().Msgf("%-10v (modifying) range %v to range %v to ensure 24h reservation margin", tomorrow, rnge, now)
 			rnge.Start = now
 		}
 		newTargetValue = append(newTargetValue, rnge)
