@@ -20,7 +20,7 @@ func Login(c *http.Client, username, password string, loginType login.LoginType)
 }
 
 func StudentLogin(c *http.Client, username, password string) (err error) {
-	reader := strings.NewReader(fmt.Sprintf("id=c&estilo=500&vista=&param=&cua=miupv&dni=%s&clau=%s", username, password))
+	reader := strings.NewReader(fmt.Sprintf("id=i&estilo=500&vista=&param=&cua=miupv&dni=%s&clau=%s", username, password))
 	req, err := http.NewRequest("POST", "https://intranet.upv.es/pls/soalu/est_aute.intraalucomp", reader)
 
 	if err != nil {
