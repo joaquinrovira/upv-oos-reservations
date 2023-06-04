@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -62,7 +63,7 @@ func init() {
 }
 
 func runJobScheduleWrapper(a *Agent, trigger *util.CronTrigger) quartz.Job {
-	return quartz.NewFunctionJob(func() (int, error) {
+	return quartz.NewFunctionJob(func(context.Context) (int, error) {
 		logging.Out().Debug().Msgf("👀 \t %s", trigger.Expression())
 		lock.Lock()
 		logging.Out().Debug().Msgf("🔒 \t %s", trigger.Expression())
@@ -83,11 +84,11 @@ func runJobScheduleWrapper(a *Agent, trigger *util.CronTrigger) quartz.Job {
 
 func (a *Agent) RunWithScheduler() (err error) {
 	sched := quartz.NewStdScheduler()
-	sched.Start()
+	sched.Start(context.TODO())
 
 	for _, trigger := range triggers {
 		job := runJobScheduleWrapper(a, trigger)
-		sched.ScheduleJob(job, trigger)
+		sched.ScheduleJob(context.TODO(), job, trigger)
 	}
 	<-a.ctx.Done()
 	sched.Stop()
