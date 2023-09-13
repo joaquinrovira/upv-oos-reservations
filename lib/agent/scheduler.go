@@ -136,7 +136,7 @@ func (a *Agent) Run() (err error) {
 		}
 
 		if rnge.Start.Value() < now.Value() {
-			logging.Out().Info().Msgf("%-10v (modifying) range %v to range %v to ensure 24h reservation margin", tomorrow, rnge, now)
+			logging.Out().Info().Msgf("%-10v (modifying) range %v to range %v-%v to ensure 24h reservation margin", tomorrow, rnge, now, rnge.End)
 			rnge.Start = now
 		}
 		newTargetValue = append(newTargetValue, rnge)
