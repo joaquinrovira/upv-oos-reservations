@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
@@ -44,8 +45,21 @@ func (a *Agent) handleTarget(reservations *model.ReservationsWeek, day time.Week
 	if err != nil {
 		return err
 	}
+	
 	if res.StatusCode < 200 || 400 <= res.StatusCode {
 		return fmt.Errorf("response with status code %v", res.Status)
+	}
+	// TODO: Refactor error detection
+	if 300 < res.StatusCode && res.StatusCode < 400 {
+		// find redirect header
+		if params, isErr := strings.CutPrefix(res.Header.Get("Location"), "sic_depact.pagina_de_error?"); isErr {
+			urlParams := strings.Split(params, "&")
+			for _, param := range urlParams {
+				if err, isErr := strings.CutPrefix(param, "p_msg_error="); isErr {
+					return fmt.Errorf("%v", err)
+				}
+			}
+		}
 	}
 
 	return nil
