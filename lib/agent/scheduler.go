@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/logging"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/daytime"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/model/timerange"
 	"github.com/joaquinrovira/upv-oos-reservations/lib/util"
 	"github.com/joaquinrovira/upv-oos-reservations/lib/vars"
 	"github.com/reugn/go-quartz/quartz"
@@ -104,42 +106,42 @@ func (a *Agent) Run() (err error) {
 		return err
 	}
 
-	// // Remove targets that have already been fulfilled
-	// reservations := value.GetReservations()
-	// for day := range reservations {
-	// 	logging.Out().Info().Msgf("%-10v (skipping) already fulfilled in time slot %v", day.String(), reservations[day].At)
-	// 	delete(targets, day)
-	// }
+	// Remove targets that have already been fulfilled
+	reservations := value.GetReservations()
+	for day := range reservations {
+		logging.Out().Info().Msgf("%-10v (skipping) already fulfilled in time slot %v", day.String(), reservations[day].At)
+		delete(targets, day)
+	}
 
-	// // Remove targets for today or the days before
-	// today := time.Now().Weekday()
-	// if today != time.Saturday {
-	// 	for day := range targets {
-	// 		if day <= today {
-	// 			logging.Out().Info().Msgf("%-10v (skipping) avoiding past days", day.String())
-	// 			delete(targets, day)
-	// 		}
-	// 	}
-	// }
+	// Remove targets for today or the days before
+	today := time.Now().Weekday()
+	if today != time.Saturday {
+		for day := range targets {
+			if day <= today {
+				logging.Out().Info().Msgf("%-10v (skipping) avoiding past days", day.String())
+				delete(targets, day)
+			}
+		}
+	}
 
-	// // Minimum 24hr buffer
-	// logging.Out().Debug().Msg("ensuring 24hr buffer")
-	// tomorrow := time.Now().Add(time.Hour * 24).Weekday()
-	// now, _ := daytime.FromTime(time.Now())
-	// var newTargetValue []timerange.TimeRange
-	// for _, rnge := range targets[tomorrow] {
-	// 	if rnge.End.Value() < now.Value() {
-	// 		logging.Out().Info().Msgf("%-10v (avoiding) range %v with less than 24h reservation margin", tomorrow, rnge)
-	// 		continue
-	// 	}
+	// Minimum 24hr buffer
+	logging.Out().Debug().Msg("ensuring 24hr buffer")
+	tomorrow := time.Now().Add(time.Hour * 24).Weekday()
+	now, _ := daytime.FromTime(time.Now())
+	var newTargetValue []timerange.TimeRange
+	for _, rnge := range targets[tomorrow] {
+		if rnge.End.Value() < now.Value() {
+			logging.Out().Info().Msgf("%-10v (avoiding) range %v with less than 24h reservation margin", tomorrow, rnge)
+			continue
+		}
 
-	// 	if rnge.Start.Value() < now.Value() {
-	// 		logging.Out().Info().Msgf("%-10v (modifying) range %v to range %v-%v to ensure 24h reservation margin", tomorrow, rnge, now, rnge.End)
-	// 		rnge.Start = now
-	// 	}
-	// 	newTargetValue = append(newTargetValue, rnge)
-	// }
-	// targets[tomorrow] = newTargetValue
+		if rnge.Start.Value() < now.Value() {
+			logging.Out().Info().Msgf("%-10v (modifying) range %v to range %v-%v to ensure 24h reservation margin", tomorrow, rnge, now, rnge.End)
+			rnge.Start = now
+		}
+		newTargetValue = append(newTargetValue, rnge)
+	}
+	targets[tomorrow] = newTargetValue
 
 	// Handle valid targets
 	for day, target := range targets {
