@@ -6,14 +6,17 @@ import (
 	"net/http/cookiejar"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/model/config"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/util"
+	"golang.org/x/time/rate"
 )
 
 type Agent struct {
 	cfg    Config
 	target config.TargetValue
-	client *http.Client
+	client util.RLHTTPClient
 	ctx    context.Context
 	cancel context.CancelFunc
 }
@@ -33,17 +36,20 @@ func New(c Config) (a *Agent, err error) {
 
 	// Initialize HTTP agent with cookie Jar
 	jar, err := cookiejar.New(nil)
-	client := http.Client{
-		// Enable cookie jar for user authentication
-		Jar: jar,
-		// Do not follow redirects
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		}}
+	client := util.NewClient(
+		&http.Client{
+			// Enable cookie jar for user authentication
+			Jar: jar,
+			// Do not follow redirects
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		},
+		rate.NewLimiter(rate.Every(1*time.Second), 3)) 
 
 	// Build agent
 	ctx, cancel := context.WithCancel(context.Background())
-	a = &Agent{cfg: c, target: target, client: &client, ctx: ctx, cancel: cancel}
+	a = &Agent{cfg: c, target: target, client: client, ctx: ctx, cancel: cancel}
 
 	// Register interrupt listener
 	ch := make(chan os.Signal, 1)

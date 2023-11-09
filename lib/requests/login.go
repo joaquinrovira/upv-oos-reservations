@@ -6,9 +6,10 @@ import (
 	"strings"
 
 	"github.com/joaquinrovira/upv-oos-reservations/lib/model/login"
+	"github.com/joaquinrovira/upv-oos-reservations/lib/util"
 )
 
-func Login(c *http.Client, username, password string, loginType login.LoginType) (err error) {
+func Login(c util.RLHTTPClient, username, password string, loginType login.LoginType) (err error) {
 	switch loginType {
 	case login.StudentLogin:
 		return StudentLogin(c, username, password)
@@ -19,7 +20,7 @@ func Login(c *http.Client, username, password string, loginType login.LoginType)
 	}
 }
 
-func StudentLogin(c *http.Client, username, password string) (err error) {
+func StudentLogin(c util.RLHTTPClient, username, password string) (err error) {
 	reader := strings.NewReader(fmt.Sprintf("id=i&estilo=500&vista=&param=&cua=miupv&dni=%s&clau=%s", username, password))
 	req, err := http.NewRequest("POST", "https://intranet.upv.es/pls/soalu/est_aute.intraalucomp", reader)
 
@@ -44,7 +45,7 @@ func StudentLogin(c *http.Client, username, password string) (err error) {
 	return
 }
 
-func PersonnelLogin(c *http.Client, username, password string) (err error) {
+func PersonnelLogin(c util.RLHTTPClient, username, password string) (err error) {
 	reader := strings.NewReader(fmt.Sprintf("id=c&X=500&vista=&param=&cua=miupv&dni=%s&rclau=%s", username, password))
 	req, err := http.NewRequest("POST", "https://intranet.upv.es/pls/soalu/est_aute.intrapercomp", reader)
 

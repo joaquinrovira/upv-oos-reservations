@@ -10,6 +10,7 @@ require (
 	github.com/lnquy/cron v1.1.1
 	github.com/reugn/go-quartz v0.7.0
 	github.com/rs/zerolog v1.29.1
+	golang.org/x/time v0.4.0
 )
 
 require (
